@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudyJNS — MUET · DUET · Sindh Uni Prep</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #050810;
+  --surface: #0c1018;
+  --card: #111720;
+  --border: #1e2738;
+  --accent: #00e5ff;
+  --accent2: #ff4d6d;
+  --accent3: #b9ff4e;
+  --accent4: #ffb347;
+  --text: #e2eaf5;
+  --muted: #4a5a70;
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: var(--font-body); min-height: 100vh; overflow-x: hidden; }
+
+/* GRID BG */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px);
+  background-size: 50px 50px;
+  pointer-events: none; z-index: 0;
+}
+
+/* PAGES */
+.page { display: none; min-height: 100vh; position: relative; z-index: 1; }
+.page.active { display: block; }
+
+/* ===== AUTH PAGE ===== */
+#authPage {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100vh; padding: 20px;
+}
+.auth-box {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 40px 32px;
+  width: 100%; max-width: 420px;
+  animation: fadeUp 0.5s ease;
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+.auth-logo { font-family: var(--font-display); font-size: 2.8rem; color: var(--accent); letter-spacing: 2px; margin-bottom: 4px; }
+.auth-sub { color: var(--muted); font-size: 0.82rem; margin-bottom: 28px; }
+.auth-tabs { display: flex; gap: 4px; background: var(--surface); border-radius: 10px; padding: 4px; margin-bottom: 24px; }
+.auth-tab { flex: 1; padding: 9px; text-align: center; border-radius: 7px; cursor: pointer; font-size: 0.88rem; font-weight: 600; color: var(--muted); transition: all 0.2s; }
+.auth-tab.active { background: var(--accent); color: #000; }
+.form-group { margin-bottom: 14px; }
+.form-group label { font-size: 0.78rem; color: var(--muted); display: block; margin-bottom: 6px; font-weight: 500; }
+.form-group input {
+  width: 100%; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 14px; color: var(--text); font-size: 0.92rem;
+  font-family: var(--font-body); outline: none; transition: border 0.2s;
+}
+.form-group input:focus { border-color: var(--accent); }
+.btn-primary {
+  width: 100%; padding: 13px; background: var(--accent); border: none;
+  border-radius: 10px; color: #000; font-size: 1rem; font-weight: 700;
+  cursor: pointer; font-family: var(--font-body); transition: opacity 0.2s; margin-top: 4px;
+}
+.btn-primary:hover { opacity: 0.88; }
+.divider { display: flex; align-items: center; gap: 12px; margin: 16px 0; }
+.divider::before, .divider::after { content:''; flex:1; height:1px; background: var(--border); }
+.divider span { color: var(--muted); font-size: 0.75rem; }
+.btn-google {
+  width: 100%; padding: 12px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; color: var(--text); font-size: 0.92rem; font-weight: 600;
+  cursor: pointer; font-family: var(--font-body); display: flex; align-items: center;
+  justify-content: center; gap: 10px; transition: border-color 0.2s;
+}
+.btn-google:hover { border-color: var(--accent); }
+.auth-msg { font-size: 0.78rem; color: var(--accent2); margin-top: 12px; text-align: center; min-height: 18px; }
+
+/* ===== NAVBAR ===== */
+.navbar {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(5,8,16,0.92); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 20px; display: flex; align-items: center; justify-content: space-between; height: 58px;
+}
+.nav-logo { font-family: var(--font-display); font-size: 1.8rem; color: var(--accent); letter-spacing: 2px; }
+.nav-links { display: flex; gap: 4px; }
+.nav-link {
+  padding: 7px 12px; border-radius: 8px; cursor: pointer;
+  font-size: 0.8rem; font-weight: 600; color: var(--muted);
+  transition: all 0.2s; border: none; background: none; font-family: var(--font-body);
+}
+.nav-link:hover, .nav-link.active { color: var(--accent); background: rgba(0,229,255,0.08); }
+.nav-user { display: flex; align-items: center; gap: 10px; }
+.nav-avatar {
+  width: 34px; height: 34px; border-radius: 50%; background: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; color: #000; font-size: 0.85rem; cursor: pointer;
+}
+.nav-logout { background: none; border: 1px solid var(--border); color: var(--muted); padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 0.78rem; font-family: var(--font-body); transition: all 0.2s; }
+.nav-logout:hover { border-color: var(--accent2); color: var(--accent2); }
+
+/* ===== MAIN WRAPPER ===== */
+.main { max-width: 860px; margin: 0 auto; padding: 28px 18px 80px; }
+
+/* ===== DASHBOARD ===== */
+.welcome-banner {
+  background: linear-gradient(135deg, #0a1f2a, #0c1a10);
+  border: 1px solid var(--border); border-radius: 16px;
+  padding: 28px; margin-bottom: 24px; position: relative; overflow: hidden;
+}
+.welcome-banner::after {
+  content: 'StudyJNS';
+  position: absolute; right: -10px; bottom: -20px;
+  font-family: var(--font-display); font-size: 7rem; color: rgba(0,229,255,0.04);
+  pointer-events: none; line-height: 1;
+}
+.welcome-name { font-family: var(--font-display); font-size: 2rem; color: var(--accent); letter-spacing: 1px; }
+.welcome-sub { color: var(--muted); font-size: 0.85rem; margin-top: 4px; }
+.welcome-target { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+.uni-pill {
+  font-size: 0.72rem; font-weight: 700; padding: 4px 12px; border-radius: 20px;
+  font-family: monospace; letter-spacing: 1px;
+}
+.stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+.stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; text-align: center; }
+.stat-card .num { font-family: var(--font-display); font-size: 2.2rem; line-height: 1; }
+.stat-card .lbl { font-size: 0.72rem; color: var(--muted); margin-top: 4px; font-weight: 500; }
+.section-head { font-family: var(--font-display); font-size: 1.5rem; letter-spacing: 1px; margin-bottom: 14px; color: var(--text); }
+.quick-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 28px; }
+.quick-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+  padding: 20px; cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden;
+}
+.quick-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.quick-card .icon { font-size: 1.8rem; margin-bottom: 10px; }
+.quick-card .title { font-weight: 700; font-size: 0.95rem; margin-bottom: 4px; }
+.quick-card .desc { font-size: 0.75rem; color: var(--muted); }
+.quick-card .arrow { position: absolute; top: 18px; right: 18px; color: var(--muted); font-size: 1.1rem; }
+
+/* ===== QUIZ PAGE ===== */
+.topic-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 28px; }
+.topic-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+  padding: 20px; cursor: pointer; transition: all 0.2s;
+}
+.topic-card:hover { border-color: var(--accent); }
+.topic-card .t-icon { font-size: 1.6rem; margin-bottom: 8px; }
+.topic-card .t-name { font-weight: 700; font-size: 0.92rem; }
+.topic-card .t-count { font-size: 0.72rem; color: var(--muted); margin-top: 3px; }
+.topic-card .t-bar { height: 3px; border-radius: 2px; margin-top: 12px; background: var(--border); overflow: hidden; }
+.topic-card .t-fill { height: 100%; border-radius: 2px; transition: width 0.5s; }
+
+/* QUIZ RUNNER */
+#quizRunner { display: none; }
+.quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.q-progress { flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin: 0 16px; }
+.q-progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent3)); border-radius: 3px; transition: width 0.3s; }
+.q-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 26px; }
+.q-tag { display: inline-block; font-size: 0.68rem; font-family: monospace; padding: 3px 10px; border-radius: 4px; margin-bottom: 12px; }
+.q-text { font-size: 0.97rem; line-height: 1.7; margin-bottom: 22px; font-weight: 500; }
+.q-options { display: flex; flex-direction: column; gap: 10px; }
+.q-opt {
+  background: var(--bg); border: 1.5px solid var(--border); border-radius: 10px;
+  padding: 12px 16px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 12px;
+}
+.q-opt:hover:not(.disabled) { border-color: var(--accent); background: rgba(0,229,255,0.05); }
+.q-opt .ol { background: var(--border); color: #888; border-radius: 6px; padding: 2px 8px; font-size: 0.76rem; font-weight: 700; min-width: 26px; text-align: center; font-family: monospace; }
+.q-opt.correct { border-color: #4caf50; background: #071a07; }
+.q-opt.correct .ol { background: #4caf50; color: #000; }
+.q-opt.wrong { border-color: var(--accent2); background: #1a0707; }
+.q-opt.wrong .ol { background: var(--accent2); color: #fff; }
+.q-opt.disabled { cursor: default; pointer-events: none; }
+.q-feedback { margin-top: 16px; padding: 14px; border-radius: 10px; display: none; font-size: 0.85rem; line-height: 1.6; }
+.q-feedback.correct { background: #071a07; border: 1px solid #4caf50; color: #a5d6a7; }
+.q-feedback.wrong { background: #1a0707; border: 1px solid var(--accent2); color: #ef9a9a; }
+.q-feedback .verdict { font-weight: 700; font-size: 0.95rem; margin-bottom: 6px; }
+.q-next { margin-top: 14px; width: 100%; padding: 12px; background: var(--accent); border: none; border-radius: 10px; color: #000; font-size: 0.95rem; font-weight: 700; cursor: pointer; display: none; font-family: var(--font-body); }
+
+/* ===== PROGRESS PAGE ===== */
+.progress-cards { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; margin-bottom: 28px; }
+.prog-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; }
+.prog-card .pc-label { font-size: 0.75rem; color: var(--muted); margin-bottom: 6px; font-weight: 600; }
+.prog-card .pc-val { font-family: var(--font-display); font-size: 2rem; }
+.prog-card .pc-bar { height: 5px; background: var(--border); border-radius: 3px; margin-top: 10px; overflow: hidden; }
+.prog-card .pc-fill { height: 100%; border-radius: 3px; }
+.history-item { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+.history-item .hi-topic { font-weight: 600; font-size: 0.88rem; }
+.history-item .hi-date { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+.history-item .hi-score { font-family: var(--font-display); font-size: 1.4rem; }
+
+/* ===== LEADERBOARD ===== */
+.lb-item { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px; margin-bottom: 8px; display: flex; align-items: center; gap: 14px; }
+.lb-rank { font-family: var(--font-display); font-size: 1.6rem; min-width: 36px; text-align: center; }
+.lb-avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; color: #000; flex-shrink: 0; }
+.lb-name { font-weight: 700; font-size: 0.9rem; }
+.lb-detail { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+.lb-score { margin-left: auto; font-family: var(--font-display); font-size: 1.5rem; color: var(--accent); }
+.lb-you { border-color: var(--accent); background: rgba(0,229,255,0.05); }
+
+/* ===== STUDY PLAN ===== */
+.plan-phase { background: var(--card); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 14px; overflow: hidden; }
+.plan-phase-head { padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+.plan-phase-head:hover { background: rgba(255,255,255,0.02); }
+.plan-phase-body { display: none; padding: 0 20px 18px; }
+.plan-phase.open .plan-phase-body { display: block; }
+.plan-topic { padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; display: flex; align-items: center; gap: 10px; color: var(--muted); }
+.plan-topic:last-child { border: none; }
+.plan-topic .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+/* ===== PAST PAPERS ===== */
+.paper-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+.paper-card .pc-name { font-weight: 700; font-size: 0.9rem; }
+.paper-card .pc-src { font-size: 0.72rem; color: var(--muted); margin-top: 3px; }
+.btn-link { padding: 7px 14px; border: 1px solid var(--accent); color: var(--accent); border-radius: 8px; font-size: 0.75rem; font-weight: 700; text-decoration: none; font-family: monospace; transition: background 0.2s; white-space: nowrap; }
+.btn-link:hover { background: rgba(0,229,255,0.1); }
+
+/* UTILS */
+.c-accent { color: var(--accent); }
+.c-accent2 { color: var(--accent2); }
+.c-accent3 { color: var(--accent3); }
+.c-accent4 { color: var(--accent4); }
+.mt16 { margin-top: 16px; }
+.mt24 { margin-top: 24px; }
+.empty { text-align: center; color: var(--muted); font-size: 0.85rem; padding: 30px; }
+.loading { text-align: center; color: var(--muted); padding: 20px; font-size: 0.85rem; }
+
+@media(max-width:520px) {
+  .stats-row { grid-template-columns: repeat(3,1fr); gap: 8px; }
+  .quick-grid { grid-template-columns: 1fr; }
+  .topic-grid { grid-template-columns: 1fr; }
+  .progress-cards { grid-template-columns: 1fr; }
+  .nav-link { padding: 7px 8px; font-size: 0.72rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== AUTH PAGE ===== -->
+<div id="authPage" class="page active">
+  <div class="auth-box">
+    <div class="auth-logo">StudyJNS</div>
+    <div class="auth-sub">MUET · DUET · Sindh University Prep</div>
+    <div class="auth-tabs">
+      <div class="auth-tab active" onclick="switchTab('login')">Login</div>
+      <div class="auth-tab" onclick="switchTab('signup')">Sign Up</div>
+    </div>
+    <div id="loginForm">
+      <div class="form-group"><label>Email</label><input type="email" id="loginEmail" placeholder="you@gmail.com"></div>
+      <div class="form-group"><label>Password</label><input type="password" id="loginPass" placeholder="••••••••"></div>
+      <button class="btn-primary" onclick="loginEmail()">Login</button>
+    </div>
+    <div id="signupForm" style="display:none">
+      <div class="form-group"><label>Full Name</label><input type="text" id="signupName" placeholder="Your name"></div>
+      <div class="form-group"><label>Email</label><input type="email" id="signupEmail" placeholder="you@gmail.com"></div>
+      <div class="form-group"><label>Password</label><input type="password" id="signupPass" placeholder="Min 6 characters"></div>
+      <button class="btn-primary" onclick="signupEmail()">Create Account</button>
+    </div>
+    <div class="divider"><span>or</span></div>
+    <button class="btn-google" onclick="loginGoogle()">
+      <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Continue with Google
+    </button>
+    <div class="auth-msg" id="authMsg"></div>
+  </div>
+</div>
+
+<!-- ===== APP PAGE ===== -->
+<div id="appPage" class="page">
+  <nav class="navbar">
+    <div class="nav-logo">StudyJNS</div>
+    <div class="nav-links">
+      <button class="nav-link active" onclick="showTab('dashboard')">🏠</button>
+      <button class="nav-link" onclick="showTab('quiz')">📝</button>
+      <button class="nav-link" onclick="showTab('progress')">📊</button>
+      <button class="nav-link" onclick="showTab('leaderboard')">🏆</button>
+      <button class="nav-link" onclick="showTab('plan')">📅</button>
+      <button class="nav-link" onclick="showTab('papers')">📄</button>
+    </div>
+    <div class="nav-user">
+      <div class="nav-avatar" id="navAvatar">J</div>
+      <button class="nav-logout" onclick="logout()">Out</button>
+    </div>
+  </nav>
+
+  <!-- DASHBOARD -->
+  <div id="tab-dashboard" class="main">
+    <div class="welcome-banner">
+      <div class="welcome-name" id="welcomeName">Hey, Jawad 👋</div>
+      <div class="welcome-sub">July target · 3 hrs/day · Let's get it</div>
+      <div class="welcome-target">
+        <span class="uni-pill" style="background:rgba(255,77,109,0.15);color:#ff4d6d;border:1px solid #ff4d6d">MUET</span>
+        <span class="uni-pill" style="background:rgba(255,179,71,0.15);color:#ffb347;border:1px solid #ffb347">DUET</span>
+        <span class="uni-pill" style="background:rgba(185,255,78,0.15);color:#b9ff4e;border:1px solid #b9ff4e">SINDH UNI</span>
+      </div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="num c-accent" id="dTotalQ">0</div><div class="lbl">Questions Done</div></div>
+      <div class="stat-card"><div class="num c-accent3" id="dAccuracy">0%</div><div class="lbl">Accuracy</div></div>
+      <div class="stat-card"><div class="num c-accent4" id="dStreak">0🔥</div><div class="lbl">Day Streak</div></div>
+    </div>
+    <div class="section-head">Quick Start</div>
+    <div class="quick-grid">
+      <div class="quick-card" onclick="showTab('quiz')"><div class="icon">📝</div><div class="title">MCQ Quiz</div><div class="desc">Practice by topic</div><div class="arrow">→</div></div>
+      <div class="quick-card" onclick="showTab('progress')"><div class="icon">📊</div><div class="title">My Progress</div><div class="desc">Track your scores</div><div class="arrow">→</div></div>
+      <div class="quick-card" onclick="showTab('leaderboard')"><div class="icon">🏆</div><div class="title">Leaderboard</div><div class="desc">Rank vs others</div><div class="arrow">→</div></div>
+      <div class="quick-card" onclick="showTab('papers')"><div class="icon">📄</div><div class="title">Past Papers</div><div class="desc">Free resources</div><div class="arrow">→</div></div>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="tab-quiz" class="main" style="display:none">
+    <div id="topicSelect">
+      <div class="section-head">📝 Choose a Topic</div>
+      <div class="topic-grid" id="topicGrid"></div>
+    </div>
+    <div id="quizRunner">
+      <div class="quiz-header">
+        <span style="font-size:0.8rem;color:var(--muted);font-family:monospace" id="qNum">Q1/10</span>
+        <div class="q-progress"><div class="q-progress-fill" id="qBar" style="width:0%"></div></div>
+        <span style="font-size:0.8rem;color:var(--muted);font-family:monospace" id="qScore">0/0</span>
+      </div>
+      <div class="q-card">
+        <div class="q-tag" id="qTag"></div>
+        <div class="q-text" id="qText"></div>
+        <div class="q-options" id="qOpts"></div>
+        <div class="q-feedback" id="qFeedback"></div>
+        <button class="q-next" id="qNext" onclick="nextQ()">Next →</button>
+      </div>
+    </div>
+    <div id="quizResult" style="display:none">
+      <div class="q-card" style="text-align:center;padding:36px 20px">
+        <div style="font-size:3rem;font-family:var(--font-display)" id="resultScore"></div>
+        <div style="font-size:1.2rem;margin:8px 0" id="resultMsg"></div>
+        <div style="font-size:0.8rem;color:var(--muted);font-family:monospace" id="resultPct"></div>
+        <button class="btn-primary" style="margin-top:24px;max-width:200px;margin-left:auto;margin-right:auto" onclick="resetQuiz()">Try Again</button>
+        <button class="btn-primary" style="margin-top:10px;max-width:200px;margin-left:auto;margin-right:auto;background:var(--surface);color:var(--text);border:1px solid var(--border)" onclick="showTab('quiz')">Other Topics</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div id="tab-progress" class="main" style="display:none">
+    <div class="section-head">📊 My Progress</div>
+    <div class="progress-cards">
+      <div class="prog-card"><div class="pc-label">TOTAL QUESTIONS</div><div class="pc-val c-accent" id="pTotal">0</div><div class="pc-bar"><div class="pc-fill" id="pTotalBar" style="width:0%;background:var(--accent)"></div></div></div>
+      <div class="prog-card"><div class="pc-label">ACCURACY</div><div class="pc-val c-accent3" id="pAcc">0%</div><div class="pc-bar"><div class="pc-fill" id="pAccBar" style="width:0%;background:var(--accent3)"></div></div></div>
+      <div class="prog-card"><div class="pc-label">QUIZZES DONE</div><div class="pc-val c-accent4" id="pQuizzes">0</div><div class="pc-bar"><div class="pc-fill" id="pQuizzesBar" style="width:0%;background:var(--accent4)"></div></div></div>
+      <div class="prog-card"><div class="pc-label">BEST SCORE</div><div class="pc-val c-accent2" id="pBest">0%</div><div class="pc-bar"><div class="pc-fill" id="pBestBar" style="width:0%;background:var(--accent2)"></div></div></div>
+    </div>
+    <div class="section-head mt24">Recent Activity</div>
+    <div id="historyList"><div class="loading">Loading history...</div></div>
+  </div>
+
+  <!-- LEADERBOARD -->
+  <div id="tab-leaderboard" class="main" style="display:none">
+    <div class="section-head">🏆 Leaderboard</div>
+    <div id="lbList"><div class="loading">Loading rankings...</div></div>
+  </div>
+
+  <!-- STUDY PLAN -->
+  <div id="tab-plan" class="main" style="display:none">
+    <div class="section-head">📅 3-Month Study Plan</div>
+    <div class="plan-phase open" id="pp1">
+      <div class="plan-phase-head" onclick="togglePhase('pp1')">
+        <div><div style="font-weight:700;font-size:0.95rem">Phase 1 — Foundation</div><div style="font-size:0.75rem;color:var(--muted);margin-top:2px">April · Weeks 1–4</div></div>
+        <span style="color:var(--accent2);font-family:monospace;font-size:0.75rem">BASICS ▾</span>
+      </div>
+      <div class="plan-phase-body">
+        <div class="plan-topic"><div class="dot" style="background:var(--accent2)"></div>Math: Algebra, Quadratics, Functions</div>
+        <div class="plan-topic"><div class="dot" style="background:var(--accent)"></div>Physics: Kinematics, Newton's Laws, Energy</div>
+        <div class="plan-topic"><div class="dot" style="background:var(--accent3)"></div>CS: Number Systems, Logic Gates, Programming Basics</div>
+        <div class="plan-topic"><div class="dot" style="background:var(--accent4)"></div>English: Tenses, Grammar, 10 vocab/day</div>
+        <div class="plan-topic"><div class="dot" style="background:var(--muted)"></div>No past papers yet — build understanding first</div>
+      </div>
+    </div>
+    <div class="plan-phase" id="pp2">
+      <div class="plan-phase-head" onclick="togglePhase('pp2')">
+        <div><div style="font-weight:700;font-size:0.95rem">Phase 2 — Drill + Past Papers</div><div style="font-size:0.75rem;color:var(--muted);margin-top:2px">May · Weeks 5–8</div></div>
+        <span style="color:var(--accent4);font-family:monospace;font-size:0.75rem">DRILL ▾</span>
+      </div>
+      <div class="plan-phase-body">
+        <div class="plan-topic"><div class="dot" style="background:var(--accent2)"></div>Math: Trig identities, Calculus, Matrices, Stats</div>
+        <div class="plan-topic"><div class="dot" style="background:var(--accent)"></div>Physics: Electricity, Magnetism, Optics, Thermo</div>
+        <div class="plan-topic"><div class="dot" style="background:var(--accent3)"></div>CS: Algorithms, Arrays, OS basics, Flowcharts</div>
+        <div class="plan-topic"><div class="dot" style="background:var(--accent4)"></div>English: Sentence correction MCQs, Comprehension</div>
+        <div class="plan-topic"><div class="dot" style="background:var(--accent)"></div>Start 10–15 past paper MCQs daily</div>
+      </div>
+    </div>
+    <div class="plan-phase" id="pp3">
+      <div class="plan-phase-head" onclick="togglePhase('pp3')">
+        <div><div style="font-weight:700;font-size:0.95rem">Phase 3 — Full Exam Mode</div><div style="font-size:0.75rem;color:var(--muted);margin-top:2px">June–July · Weeks 9–12</div></div>
+        <span style="color:var(--accent3);font-family:monospace;font-size:0.75rem">FINAL ▾</span>
+      </div>
+      <div class="plan-phase-body">
+        <div class="plan-topic"><div class="dot" style="background:var(--accent3)"></div>No new topics — revision only</div>
+        <div class="plan-topic"><div class="dot" style="background:var(--accent3)"></div>1 full mock test per week (timed)</div>
+        <div class="plan-topic"><div class="dot" style="background:var(--accent3)"></div>Speed drills — 1 min per question max</div>
+        <div class="plan-topic"><div class="dot" style="background:var(--accent3)"></div>Week 9: MUET · Week 10: DUET · Week 11-12: Mixed</div>
+        <div class="plan-topic"><div class="dot" style="background:var(--muted)"></div>Stop studying 1 day before exam. Sleep 7+ hrs.</div>
+      </div>
+    </div>
+    <div style="background:rgba(0,229,255,0.06);border:1px solid var(--accent);border-radius:12px;padding:16px;margin-top:20px">
+      <div style="font-weight:700;color:var(--accent);margin-bottom:8px">💡 Golden Rules</div>
+      <div style="font-size:0.82rem;color:var(--muted);line-height:1.8">
+        ✅ Past papers over textbooks<br>
+        ✅ Every wrong answer = review it<br>
+        ✅ Speed matters — 60 sec per MCQ max<br>
+        ✅ Sabaq Foundation (free Urdu lectures)<br>
+        ✅ Phone off during 3hr study sessions
+      </div>
+    </div>
+  </div>
+
+  <!-- PAST PAPERS -->
+  <div id="tab-papers" class="main" style="display:none">
+    <div class="section-head">📄 Past Papers & Resources</div>
+    <div style="margin-bottom:16px">
+      <div style="font-size:0.75rem;color:var(--muted);font-family:monospace;letter-spacing:2px;margin-bottom:10px">PAST PAPERS</div>
+      <div class="paper-card"><div><div class="pc-name">MUET Past Papers</div><div class="pc-src">ilmkidunya.com</div></div><a href="https://www.ilmkidunya.com/papers/muet-entry-test-past-papers.aspx" target="_blank" class="btn-link">Open →</a></div>
+      <div class="paper-card"><div><div class="pc-name">Dawood DUET Papers</div><div class="pc-src">paperpk.com</div></div><a href="https://www.paperpk.com/past-papers/dawood-university/" target="_blank" class="btn-link">Open →</a></div>
+      <div class="paper-card"><div><div class="pc-name">Sindh University Papers</div><div class="pc-src">ilmkidunya.com</div></div><a href="https://www.ilmkidunya.com/papers/university-of-sindh-past-papers.aspx" target="_blank" class="btn-link">Open →</a></div>
+    </div>
+    <div style="margin-bottom:16px">
+      <div style="font-size:0.75rem;color:var(--muted);font-family:monospace;letter-spacing:2px;margin-bottom:10px">FREE LECTURES</div>
+      <div class="paper-card"><div><div class="pc-name">Sabaq Foundation</div><div class="pc-src">Free Urdu · Full ICS syllabus · YouTube</div></div><a href="https://www.youtube.com/@SabaqFoundation" target="_blank" class="btn-link">Open →</a></div>
+      <div class="paper-card"><div><div class="pc-name">NearPeer MCQ Bank</div><div class="pc-src">nearpeer.org · Entry test focused</div></div><a href="https://www.nearpeer.org" target="_blank" class="btn-link">Open →</a></div>
+      <div class="paper-card"><div><div class="pc-name">Khan Academy</div><div class="pc-src">Free Math & Physics · English available</div></div><a href="https://www.khanacademy.org" target="_blank" class="btn-link">Open →</a></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Firebase SDKs -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, orderBy, limit, getDocs, updateDoc, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAYyHIKkSE0HP8Kz2_B4P1jHx5oYA7i9Vs",
+  authDomain: "studyjns.firebaseapp.com",
+  projectId: "studyjns",
+  storageBucket: "studyjns.firebasestorage.app",
+  messagingSenderId: "692856207954",
+  appId: "1:692856207954:web:30cad3b5d0d39ccac07d8b"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const googleProvider = new GoogleAuthProvider();
+
+let currentUser = null;
+let currentQ = 0, currentScore = 0, currentCorrect = 0, quizAnswered = false;
+let currentQuestions = [], currentTopic = '';
+
+// ===== QUESTIONS DATA =====
+const allTopics = [
+  {
+    id: 'trig', name: 'Trigonometry', icon: '📐', color: '#00e5ff',
+    questions: [
+      { q: "sin²θ + cos²θ = ?", opts: ["0","1","2","sinθ cosθ","tanθ"], ans: 1, exp: "This is the fundamental Pythagorean identity. Always equals 1 for any angle θ." },
+      { q: "Which is equivalent to tanθ?", opts: ["cosθ/sinθ","sinθ/cosθ","1/sinθ","1/cosθ","sinθ·cosθ"], ans: 1, exp: "tanθ = sinθ/cosθ by definition." },
+      { q: "sec²θ − tan²θ = ?", opts: ["0","2","1","tanθ","secθ"], ans: 2, exp: "From sec²θ = 1+tan²θ, rearranging gives sec²θ − tan²θ = 1." },
+      { q: "If sinθ = 3/5, what is cosθ (first quadrant)?", opts: ["4/5","3/4","5/3","5/4","3/5"], ans: 0, exp: "Using sin²θ+cos²θ=1: cos²θ=1−9/25=16/25, cosθ=4/5." },
+      { q: "cosec²θ − cot²θ = ?", opts: ["0","1","2","cosecθ","cotθ"], ans: 1, exp: "From cosec²θ = 1+cot²θ, rearranging gives cosec²θ − cot²θ = 1." },
+    ]
+  },
+  {
+    id: 'quad', name: 'Quadratic Roots', icon: '📊', color: '#ffb347',
+    questions: [
+      { q: "For ax²+bx+c=0, α+β = ?", opts: ["b/a","−b/a","c/a","−c/a","b/c"], ans: 1, exp: "Sum of roots formula: α+β = −b/a." },
+      { q: "For ax²+bx+c=0, α·β = ?", opts: ["b/a","−b/a","c/a","−c/a","b/c"], ans: 2, exp: "Product of roots formula: α·β = c/a." },
+      { q: "Roots of x²−5x+6=0 are?", opts: ["2,3","−2,−3","1,6","−1,−6","2,−3"], ans: 0, exp: "Factor: (x−2)(x−3)=0. Roots: 2 and 3. Check: 2+3=5 ✓, 2×3=6 ✓" },
+      { q: "If roots of x²+px+q=0 are equal, then?", opts: ["p²=q","p²=4q","p=4q","p²=2q","4p=q²"], ans: 1, exp: "Equal roots → discriminant=0 → b²−4ac=0 → p²−4q=0 → p²=4q." },
+      { q: "α²+β² in terms of α+β and αβ = ?", opts: ["(α+β)²+2αβ","(α+β)²−2αβ","(α−β)²+αβ","(αβ)²−2","(α+β)−2αβ"], ans: 1, exp: "α²+β² = (α+β)²−2αβ. This is a key identity for entry tests." },
+    ]
+  },
+  {
+    id: 'algebra', name: 'Algebra', icon: '🔢', color: '#ff4d6d',
+    questions: [
+      { q: "LCM of 4, 6 and 9 is?", opts: ["18","36","12","72","24"], ans: 1, exp: "4=2², 6=2×3, 9=3². LCM=2²×3²=4×9=36." },
+      { q: "If x+1/x=3, then x²+1/x²=?", opts: ["7","9","11","6","8"], ans: 0, exp: "(x+1/x)²=x²+2+1/x²=9, so x²+1/x²=9−2=7." },
+      { q: "Factors of x²−9 are?", opts: ["(x+3)²","(x−3)²","(x+3)(x−3)","(x+9)(x−1)","(x−9)(x+1)"], ans: 2, exp: "Difference of squares: a²−b²=(a+b)(a−b). So x²−9=(x+3)(x−3)." },
+      { q: "If 2x+3=11, then x=?", opts: ["3","4","5","6","7"], ans: 1, exp: "2x=11−3=8, x=4." },
+      { q: "Which is a perfect square trinomial?", opts: ["x²+4x+3","x²+6x+9","x²+5x+4","x²+3x+2","x²+2x+3"], ans: 1, exp: "x²+6x+9=(x+3)². For perfect square: middle term=2×√(first)×√(last)=2×x×3=6x ✓" },
+    ]
+  },
+  {
+    id: 'physics', name: 'Physics', icon: '⚡', color: '#b9ff4e',
+    questions: [
+      { q: "F = ma is Newton's which law?", opts: ["1st","2nd","3rd","Law of gravity","Law of motion"], ans: 1, exp: "Newton's 2nd Law: Force = mass × acceleration." },
+      { q: "Unit of force is?", opts: ["Watt","Joule","Newton","Pascal","Ampere"], ans: 2, exp: "Force is measured in Newtons (N). 1N = 1 kg·m/s²." },
+      { q: "KE = ? (standard formula)", opts: ["mv","mv²","½mv²","2mv","½mv"], ans: 2, exp: "Kinetic Energy = ½mv² where m=mass, v=velocity." },
+      { q: "Speed of light in vacuum is approximately?", opts: ["3×10⁶ m/s","3×10⁸ m/s","3×10¹⁰ m/s","3×10⁴ m/s","3×10¹² m/s"], ans: 1, exp: "Speed of light c ≈ 3×10⁸ m/s. This is a fundamental constant." },
+      { q: "An object in free fall has acceleration of?", opts: ["0 m/s²","5 m/s²","9.8 m/s²","15 m/s²","3 m/s²"], ans: 2, exp: "Free fall acceleration due to gravity g ≈ 9.8 m/s² (often rounded to 10 m/s² in MCQs)." },
+    ]
+  },
+  {
+    id: 'cs', name: 'Computer Science', icon: '💻', color: '#c084fc',
+    questions: [
+      { q: "Binary of decimal 10 is?", opts: ["1010","1001","1100","1011","0110"], ans: 0, exp: "10÷2=5r0, 5÷2=2r1, 2÷2=1r0, 1÷2=0r1. Read remainders bottom-up: 1010." },
+      { q: "AND gate output is 1 when?", opts: ["Any input is 1","All inputs are 1","Any input is 0","All inputs are 0","First input is 1"], ans: 1, exp: "AND gate: output is 1 ONLY when ALL inputs are 1. 1 AND 1 = 1, everything else = 0." },
+      { q: "Which is NOT a programming language?", opts: ["Python","Java","HTML","C++","JavaScript"], ans: 2, exp: "HTML (HyperText Markup Language) is a markup language, not a programming language. It describes structure, not logic." },
+      { q: "RAM stands for?", opts: ["Read Access Memory","Random Access Memory","Read All Memory","Random All Memory","Run Access Mode"], ans: 1, exp: "RAM = Random Access Memory. It's the temporary/working memory of a computer." },
+      { q: "What does CPU stand for?", opts: ["Central Processing Unit","Computer Processing Unit","Central Program Unit","Computer Program Unit","Core Processing Unit"], ans: 0, exp: "CPU = Central Processing Unit. It's the brain of the computer." },
+    ]
+  },
+  {
+    id: 'english', name: 'English', icon: '📝', color: '#f472b6',
+    questions: [
+      { q: "Choose the correct sentence:", opts: ["She don't know","She doesn't knows","She doesn't know","She not know","She didn't knew"], ans: 2, exp: "With singular 3rd person (she/he/it), use 'doesn't' + base verb. 'She doesn't know' is correct." },
+      { q: "Synonym of 'Diligent' is?", opts: ["Lazy","Hardworking","Careless","Slow","Weak"], ans: 1, exp: "Diligent means hardworking and careful. Remember: diligence = hard work." },
+      { q: "Antonym of 'Abundant' is?", opts: ["Plenty","Rich","Scarce","Full","Ample"], ans: 2, exp: "Abundant = lots of. Antonym = scarce (very little/rare)." },
+      { q: "Passive voice of 'He writes a letter':", opts: ["A letter is written by him","A letter was written by him","A letter written by him","He is written a letter","A letter is write by him"], ans: 0, exp: "Active: Subject + verb + object. Passive: Object + is/are + past participle + by + subject. Present tense → 'is written'." },
+      { q: "Choose the correct tense: 'I ___ here since 2020'", opts: ["am","was","have been","had been","will be"], ans: 2, exp: "'Since' indicates a point in time continuing to present. Use Present Perfect: 'have been'. 'I have been here since 2020.'" },
+    ]
+  }
+];
+
+// ===== AUTH FUNCTIONS =====
+window.switchTab = (tab) => {
+  document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', (i===0&&tab==='login')||(i===1&&tab==='signup')));
+  document.getElementById('loginForm').style.display = tab==='login'?'block':'none';
+  document.getElementById('signupForm').style.display = tab==='signup'?'block':'none';
+  document.getElementById('authMsg').textContent = '';
+};
+
+window.loginEmail = async () => {
+  const email = document.getElementById('loginEmail').value;
+  const pass = document.getElementById('loginPass').value;
+  setMsg('Logging in...');
+  try { await signInWithEmailAndPassword(auth, email, pass); }
+  catch(e) { setMsg(friendlyError(e.code)); }
+};
+
+window.signupEmail = async () => {
+  const name = document.getElementById('signupName').value;
+  const email = document.getElementById('signupEmail').value;
+  const pass = document.getElementById('signupPass').value;
+  if (!name) return setMsg('Enter your name');
+  setMsg('Creating account...');
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, email, pass);
+    await updateProfile(cred.user, { displayName: name });
+    await createUserDoc(cred.user, name);
+  } catch(e) { setMsg(friendlyError(e.code)); }
+};
+
+window.loginGoogle = async () => {
+  setMsg('Opening Google...');
+  try {
+    const cred = await signInWithPopup(auth, googleProvider);
+    await createUserDoc(cred.user, cred.user.displayName || 'Student');
+  } catch(e) { setMsg(friendlyError(e.code)); }
+};
+
+window.logout = async () => { await signOut(auth); };
+
+function setMsg(m) { document.getElementById('authMsg').textContent = m; }
+function friendlyError(code) {
+  const map = { 'auth/wrong-password':'Wrong password','auth/user-not-found':'No account found','auth/email-already-in-use':'Email already registered','auth/weak-password':'Password too short (min 6)','auth/invalid-email':'Invalid email format' };
+  return map[code] || 'Something went wrong. Try again.';
+}
+
+async function createUserDoc(user, name) {
+  const ref = doc(db, 'users', user.uid);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) {
+    await setDoc(ref, { name, email: user.email, totalQ: 0, correct: 0, quizzes: 0, bestScore: 0, streak: 0, lastActive: serverTimestamp(), joined: serverTimestamp() });
+  }
+}
+
+// ===== AUTH STATE =====
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    currentUser = user;
+    showApp(user);
+  } else {
+    currentUser = null;
+    document.getElementById('authPage').classList.add('active');
+    document.getElementById('appPage').classList.remove('active');
+  }
+});
+
+async function showApp(user) {
+  document.getElementById('authPage').classList.remove('active');
+  document.getElementById('appPage').classList.add('active');
+  const name = user.displayName || 'Student';
+  document.getElementById('welcomeName').textContent = `Hey, ${name.split(' ')[0]} 👋`;
+  document.getElementById('navAvatar').textContent = name[0].toUpperCase();
+  renderTopics();
+  await loadDashboardStats();
+}
+
+// ===== NAVIGATION =====
+window.showTab = (tab) => {
+  document.querySelectorAll('[id^="tab-"]').forEach(t => t.style.display='none');
+  document.getElementById(`tab-${tab}`).style.display='block';
+  document.querySelectorAll('.nav-link').forEach((l,i) => {
+    const tabs = ['dashboard','quiz','progress','leaderboard','plan','papers'];
+    l.classList.toggle('active', tabs[i]===tab);
+  });
+  if (tab==='progress') loadProgress();
+  if (tab==='leaderboard') loadLeaderboard();
+  if (tab==='quiz') { document.getElementById('topicSelect').style.display='block'; document.getElementById('quizRunner').style.display='none'; document.getElementById('quizResult').style.display='none'; }
+};
+
+// ===== DASHBOARD STATS =====
+async function loadDashboardStats() {
+  if (!currentUser) return;
+  const snap = await getDoc(doc(db,'users',currentUser.uid));
+  if (snap.exists()) {
+    const d = snap.data();
+    const acc = d.totalQ > 0 ? Math.round((d.correct/d.totalQ)*100) : 0;
+    document.getElementById('dTotalQ').textContent = d.totalQ || 0;
+    document.getElementById('dAccuracy').textContent = acc + '%';
+    document.getElementById('dStreak').textContent = (d.streak||0) + '🔥';
+  }
+}
+
+// ===== QUIZ =====
+function renderTopics() {
+  const grid = document.getElementById('topicGrid');
+  grid.innerHTML = allTopics.map(t => `
+    <div class="topic-card" onclick="startQuiz('${t.id}')">
+      <div class="t-icon">${t.icon}</div>
+      <div class="t-name">${t.name}</div>
+      <div class="t-count">${t.questions.length} questions</div>
+      <div class="t-bar"><div class="t-fill" style="width:0%;background:${t.color}"></div></div>
+    </div>`).join('');
+}
+
+window.startQuiz = (topicId) => {
+  const topic = allTopics.find(t => t.id === topicId);
+  currentQuestions = [...topic.questions].sort(() => Math.random()-0.5);
+  currentTopic = topic.name;
+  currentQ = 0; currentScore = 0; currentCorrect = 0; quizAnswered = false;
+  document.getElementById('topicSelect').style.display = 'none';
+  document.getElementById('quizRunner').style.display = 'block';
+  document.getElementById('quizResult').style.display = 'none';
+  renderQuestion();
+};
+
+function renderQuestion() {
+  const q = currentQuestions[currentQ];
+  const total = currentQuestions.length;
+  const pct = (currentQ/total)*100;
+  document.getElementById('qNum').textContent = `Q${currentQ+1}/${total}`;
+  document.getElementById('qBar').style.width = pct+'%';
+  document.getElementById('qScore').textContent = `${currentCorrect}/${currentQ}`;
+  document.getElementById('qTag').textContent = currentTopic;
+  document.getElementById('qTag').style.cssText = `color:var(--accent);border:1px solid var(--accent);background:rgba(0,229,255,0.08);display:inline-block;font-size:0.68rem;font-family:monospace;padding:3px 10px;border-radius:4px;margin-bottom:12px`;
+  document.getElementById('qText').textContent = q.q;
+  document.getElementById('qOpts').innerHTML = q.opts.map((o,i) => `
+    <div class="q-opt" id="qo${i}" onclick="chooseAnswer(${i})">
+      <span class="ol">${['A','B','C','D','E'][i]}</span>
+      <span>${o}</span>
+    </div>`).join('');
+  document.getElementById('qFeedback').style.display = 'none';
+  document.getElementById('qNext').style.display = 'none';
+  quizAnswered = false;
+}
+
+window.chooseAnswer = (i) => {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  const q = currentQuestions[currentQ];
+  const ok = i === q.ans;
+  if (ok) { currentCorrect++; currentScore++; }
+  document.querySelectorAll('.q-opt').forEach(o => o.classList.add('disabled'));
+  document.getElementById('qo'+i).classList.add(ok?'correct':'wrong');
+  if (!ok) document.getElementById('qo'+q.ans).classList.add('correct');
+  const fb = document.getElementById('qFeedback');
+  fb.style.display = 'block';
+  fb.className = 'q-feedback '+(ok?'correct':'wrong');
+  fb.innerHTML = `<div class="verdict">${ok?'✅ Correct!':'❌ Wrong!'}</div>${q.exp}`;
+  document.getElementById('qNext').style.display = 'block';
+  document.getElementById('qNext').textContent = currentQ===currentQuestions.length-1 ? 'See Results' : 'Next →';
+};
+
+window.nextQ = () => {
+  currentQ++;
+  if (currentQ >= currentQuestions.length) showResult();
+  else renderQuestion();
+};
+
+async function showResult() {
+  document.getElementById('quizRunner').style.display = 'none';
+  document.getElementById('quizResult').style.display = 'block';
+  const total = currentQuestions.length;
+  const pct = Math.round((currentCorrect/total)*100);
+  const msg = pct>=80?'🔥 Beast!':pct>=60?'💪 Good':pct>=40?'📚 Keep Going':'😤 Grind More';
+  document.getElementById('resultScore').textContent = `${currentCorrect}/${total}`;
+  document.getElementById('resultScore').style.color = pct>=60?'var(--accent3)':'var(--accent2)';
+  document.getElementById('resultMsg').textContent = msg;
+  document.getElementById('resultPct').textContent = `${pct}% · ${currentTopic}`;
+  if (currentUser) {
+    const ref = doc(db,'users',currentUser.uid);
+    const snap = await getDoc(ref);
+    const prev = snap.data() || {};
+    await updateDoc(ref, {
+      totalQ: (prev.totalQ||0)+total,
+      correct: (prev.correct||0)+currentCorrect,
+      quizzes: (prev.quizzes||0)+1,
+      bestScore: Math.max(prev.bestScore||0, pct),
+      lastActive: serverTimestamp()
+    });
+    await addDoc(collection(db,'users',currentUser.uid,'history'), {
+      topic: currentTopic, score: currentCorrect, total, pct, date: serverTimestamp()
+    });
+    await loadDashboardStats();
+  }
+}
+
+window.resetQuiz = () => { currentQ=0; currentCorrect=0; quizAnswered=false; currentQuestions.sort(()=>Math.random()-0.5); document.getElementById('quizRunner').style.display='block'; document.getElementById('quizResult').style.display='none'; renderQuestion(); };
+
+// ===== PROGRESS =====
+async function loadProgress() {
+  if (!currentUser) return;
+  const snap = await getDoc(doc(db,'users',currentUser.uid));
+  if (snap.exists()) {
+    const d = snap.data();
+    const acc = d.totalQ>0 ? Math.round((d.correct/d.totalQ)*100) : 0;
+    document.getElementById('pTotal').textContent = d.totalQ||0;
+    document.getElementById('pTotalBar').style.width = Math.min(100,(d.totalQ||0)/2)+'%';
+    document.getElementById('pAcc').textContent = acc+'%';
+    document.getElementById('pAccBar').style.width = acc+'%';
+    document.getElementById('pQuizzes').textContent = d.quizzes||0;
+    document.getElementById('pQuizzesBar').style.width = Math.min(100,(d.quizzes||0)*10)+'%';
+    document.getElementById('pBest').textContent = (d.bestScore||0)+'%';
+    document.getElementById('pBestBar').style.width = (d.bestScore||0)+'%';
+  }
+  const hSnap = await getDocs(query(collection(db,'users',currentUser.uid,'history'), orderBy('date','desc'), limit(10)));
+  const list = document.getElementById('historyList');
+  if (hSnap.empty) { list.innerHTML = '<div class="empty">No quiz history yet. Do your first quiz! 📝</div>'; return; }
+  list.innerHTML = hSnap.docs.map(d => {
+    const h = d.data();
+    const date = h.date?.toDate ? h.date.toDate().toLocaleDateString() : 'Recently';
+    return `<div class="history-item"><div><div class="hi-topic">${h.topic}</div><div class="hi-date">${date}</div></div><div class="hi-score" style="color:${h.pct>=60?'var(--accent3)':'var(--accent2)'}">${h.pct}%</div></div>`;
+  }).join('');
+}
+
+// ===== LEADERBOARD =====
+async function loadLeaderboard() {
+  const snap = await getDocs(query(collection(db,'users'), orderBy('correct','desc'), limit(20)));
+  const list = document.getElementById('lbList');
+  if (snap.empty) { list.innerHTML = '<div class="empty">No players yet. Be the first! 🏆</div>'; return; }
+  const colors = ['#ffb347','#c0c0c0','#cd7f32'];
+  const medals = ['🥇','🥈','🥉'];
+  list.innerHTML = snap.docs.map((d,i) => {
+    const u = d.data();
+    const acc = u.totalQ>0 ? Math.round((u.correct/u.totalQ)*100) : 0;
+    const isYou = d.id === currentUser?.uid;
+    const bg = colors[i] || 'var(--accent)';
+    return `<div class="lb-item ${isYou?'lb-you':''}">
+      <div class="lb-rank">${i<3?medals[i]:i+1}</div>
+      <div class="lb-avatar" style="background:${bg}">${(u.name||'S')[0].toUpperCase()}</div>
+      <div><div class="lb-name">${u.name||'Student'}${isYou?' (You)':''}</div><div class="lb-detail">${u.quizzes||0} quizzes · ${acc}% accuracy</div></div>
+      <div class="lb-score">${u.correct||0}</div>
+    </div>`;
+  }).join('');
+}
+
+// ===== STUDY PLAN =====
+window.togglePhase = (id) => document.getElementById(id).classList.toggle('open');
+
+</script>
+</body>
+</html>
