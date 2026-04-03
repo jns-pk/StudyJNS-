@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudyJNS — ECAT & MDCAT Prep</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+:root {
+  --bg: #050810;
+  --surface: #0c1018;
+  --card: #111720;
+  --border: #1e2738;
+  --accent: #00e5ff;
+  --accent2: #ff4d6d;
+  --accent3: #b9ff4e;
+  --accent4: #ffb347;
+  --purple: #c084fc;
+  --text: #e2eaf5;
+  --muted: #4a5a70;
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: var(--font-body); overflow-x: hidden; }
+body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(0,229,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(0,229,255,0.02) 1px, transparent 1px); background-size: 50px 50px; pointer-events: none; z-index: 0; }
+
+/* SCREENS */
+.screen { display: none; min-height: 100vh; position: relative; z-index: 1; }
+.screen.active { display: block; }
+
+/* ===== NAVBAR ===== */
+.navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: rgba(5,8,16,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 20px; display: flex; align-items: center; justify-content: space-between; height: 56px; }
+.nav-logo { font-family: var(--font-display); font-size: 1.6rem; color: var(--accent); letter-spacing: 2px; cursor: pointer; }
+.nav-right { display: flex; align-items: center; gap: 12px; }
+.hamburger { background: none; border: none; cursor: pointer; padding: 6px; display: flex; flex-direction: column; gap: 5px; }
+.hamburger span { display: block; width: 22px; height: 2px; background: var(--text); border-radius: 2px; transition: all 0.3s; }
+.nav-auth-btns { display: flex; gap: 8px; }
+.btn-sm { padding: 7px 16px; border-radius: 8px; font-size: 0.82rem; font-weight: 600; cursor: pointer; font-family: var(--font-body); transition: all 0.2s; }
+.btn-outline { background: none; border: 1px solid var(--border); color: var(--text); }
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+.btn-filled { background: var(--accent); border: none; color: #000; }
+.btn-filled:hover { opacity: 0.88; }
+.nav-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 700; color: #000; font-size: 0.82rem; cursor: pointer; display: none; }
+
+/* SLIDE MENU */
+.slide-menu { position: fixed; top: 0; right: -300px; width: 280px; height: 100vh; background: var(--surface); border-left: 1px solid var(--border); z-index: 2000; transition: right 0.3s ease; padding: 70px 0 20px; overflow-y: auto; }
+.slide-menu.open { right: 0; }
+.menu-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1999; display: none; }
+.menu-overlay.open { display: block; }
+.menu-section { padding: 8px 20px 4px; font-size: 0.65rem; font-family: monospace; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; }
+.menu-item { padding: 13px 20px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: background 0.2s; font-size: 0.92rem; font-weight: 500; border-left: 3px solid transparent; }
+.menu-item:hover { background: rgba(0,229,255,0.05); border-left-color: var(--accent); color: var(--accent); }
+.menu-item .mi-icon { font-size: 1.1rem; width: 24px; text-align: center; }
+.menu-divider { height: 1px; background: var(--border); margin: 8px 0; }
+.menu-close { position: absolute; top: 16px; right: 16px; background: none; border: none; color: var(--muted); font-size: 1.4rem; cursor: pointer; }
+
+/* ===== LANDING ===== */
+#landing { padding-top: 56px; }
+.hero { min-height: calc(100vh - 56px); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 20px; position: relative; }
+.hero-tag { display: inline-block; font-family: monospace; font-size: 0.7rem; color: var(--accent); border: 1px solid var(--accent); padding: 4px 14px; border-radius: 2px; letter-spacing: 3px; margin-bottom: 20px; animation: fadeUp 0.5s ease; }
+.hero h1 { font-family: var(--font-display); font-size: clamp(3rem, 12vw, 6rem); line-height: 0.95; letter-spacing: 2px; animation: fadeUp 0.6s ease; }
+.hero h1 span { color: var(--accent); }
+.hero-sub { font-size: clamp(0.9rem, 3vw, 1.1rem); color: var(--muted); margin: 20px 0 32px; max-width: 500px; line-height: 1.6; animation: fadeUp 0.7s ease; }
+.hero-btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; animation: fadeUp 0.8s ease; }
+.btn-hero { padding: 14px 28px; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; font-family: var(--font-body); transition: all 0.2s; }
+.btn-hero-primary { background: var(--accent); border: none; color: #000; }
+.btn-hero-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,229,255,0.3); }
+.btn-hero-secondary { background: none; border: 1px solid var(--border); color: var(--text); }
+.btn-hero-secondary:hover { border-color: var(--accent); color: var(--accent); }
+.quote-strip { background: var(--card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 20px; text-align: center; font-style: italic; color: var(--muted); font-size: 0.9rem; }
+.quote-strip strong { color: var(--accent3); font-style: normal; }
+
+/* FEATURES */
+.features { padding: 60px 20px; max-width: 860px; margin: 0 auto; }
+.section-title { font-family: var(--font-display); font-size: 2rem; letter-spacing: 1px; margin-bottom: 6px; }
+.section-sub { color: var(--muted); font-size: 0.85rem; margin-bottom: 30px; }
+.feat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.feat-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 22px; position: relative; overflow: hidden; }
+.feat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+.feat-card:nth-child(1)::before { background: var(--accent); }
+.feat-card:nth-child(2)::before { background: var(--accent2); }
+.feat-card:nth-child(3)::before { background: var(--accent3); }
+.feat-card:nth-child(4)::before { background: var(--accent4); }
+.feat-icon { font-size: 1.8rem; margin-bottom: 10px; }
+.feat-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 6px; }
+.feat-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+
+/* SUBJECTS STRIP */
+.subjects-strip { padding: 40px 20px; background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.subjects-strip h2 { font-family: var(--font-display); font-size: 1.8rem; text-align: center; margin-bottom: 20px; }
+.subj-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.subj-pill { padding: 10px 20px; border-radius: 30px; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; border: 1px solid; }
+.subj-pill:hover { transform: translateY(-2px); }
+
+/* MOTIVATION */
+.motivation { padding: 50px 20px; text-align: center; max-width: 600px; margin: 0 auto; }
+.quote-big { font-family: var(--font-display); font-size: clamp(1.4rem, 4vw, 2rem); color: var(--accent); line-height: 1.3; margin-bottom: 12px; }
+.quote-attr { color: var(--muted); font-size: 0.82rem; }
+.quotes-list { display: flex; flex-direction: column; gap: 16px; margin-top: 30px; }
+.q-item { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; border-left: 3px solid var(--accent); font-style: italic; font-size: 0.88rem; color: var(--muted); text-align: left; }
+.q-item strong { color: var(--text); display: block; margin-top: 6px; font-style: normal; font-size: 0.78rem; }
+
+/* CTA */
+.cta { padding: 60px 20px; text-align: center; }
+.cta h2 { font-family: var(--font-display); font-size: clamp(2rem, 6vw, 3rem); margin-bottom: 12px; }
+.cta p { color: var(--muted); margin-bottom: 24px; font-size: 0.9rem; }
+
+/* ===== AUTH MODAL ===== */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 3000; display: none; align-items: center; justify-content: center; padding: 20px; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 32px; width: 100%; max-width: 400px; animation: fadeUp 0.3s ease; position: relative; }
+.modal-close { position: absolute; top: 14px; right: 16px; background: none; border: none; color: var(--muted); font-size: 1.3rem; cursor: pointer; }
+.modal-logo { font-family: var(--font-display); font-size: 2rem; color: var(--accent); margin-bottom: 4px; }
+.modal-sub { color: var(--muted); font-size: 0.78rem; margin-bottom: 22px; }
+.auth-tabs { display: flex; gap: 4px; background: var(--surface); border-radius: 10px; padding: 4px; margin-bottom: 20px; }
+.auth-tab { flex: 1; padding: 8px; text-align: center; border-radius: 7px; cursor: pointer; font-size: 0.85rem; font-weight: 600; color: var(--muted); transition: all 0.2s; }
+.auth-tab.active { background: var(--accent); color: #000; }
+.form-group { margin-bottom: 12px; }
+.form-group label { font-size: 0.75rem; color: var(--muted); display: block; margin-bottom: 5px; font-weight: 500; }
+.form-group input { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 9px; padding: 11px 13px; color: var(--text); font-size: 0.9rem; font-family: var(--font-body); outline: none; transition: border 0.2s; }
+.form-group input:focus { border-color: var(--accent); }
+.btn-primary { width: 100%; padding: 12px; background: var(--accent); border: none; border-radius: 9px; color: #000; font-size: 0.95rem; font-weight: 700; cursor: pointer; font-family: var(--font-body); transition: opacity 0.2s; margin-top: 4px; }
+.btn-primary:hover { opacity: 0.88; }
+.divider { display: flex; align-items: center; gap: 10px; margin: 14px 0; }
+.divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.divider span { color: var(--muted); font-size: 0.72rem; }
+.btn-google { width: 100%; padding: 11px; background: var(--surface); border: 1px solid var(--border); border-radius: 9px; color: var(--text); font-size: 0.88rem; font-weight: 600; cursor: pointer; font-family: var(--font-body); display: flex; align-items: center; justify-content: center; gap: 10px; transition: border-color 0.2s; }
+.btn-google:hover { border-color: var(--accent); }
+.auth-msg { font-size: 0.75rem; color: var(--accent2); margin-top: 10px; text-align: center; min-height: 16px; }
+
+/* ===== APP SCREEN ===== */
+#app { padding-top: 56px; }
+.app-main { max-width: 860px; margin: 0 auto; padding: 24px 16px 80px; }
+
+/* DASHBOARD */
+.welcome-card { background: linear-gradient(135deg, #0a1f2a, #0d1a10); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 20px; position: relative; overflow: hidden; }
+.welcome-card::after { content: 'StudyJNS'; position: absolute; right: -10px; bottom: -20px; font-family: var(--font-display); font-size: 6rem; color: rgba(0,229,255,0.04); pointer-events: none; }
+.wc-name { font-family: var(--font-display); font-size: 1.8rem; color: var(--accent); }
+.wc-sub { color: var(--muted); font-size: 0.82rem; margin-top: 3px; }
+.wc-quote { margin-top: 14px; font-style: italic; font-size: 0.82rem; color: var(--accent3); border-left: 2px solid var(--accent3); padding-left: 10px; }
+.stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 20px; }
+.stat-box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: center; }
+.stat-box .sn { font-family: var(--font-display); font-size: 2rem; line-height: 1; }
+.stat-box .sl { font-size: 0.68rem; color: var(--muted); margin-top: 3px; font-weight: 500; }
+
+/* SUBJECTS GRID */
+.subj-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin-bottom: 24px; }
+.subj-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden; }
+.subj-card:hover { transform: translateY(-2px); }
+.subj-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+.subj-card .sc-icon { font-size: 2rem; margin-bottom: 8px; }
+.subj-card .sc-name { font-weight: 700; font-size: 0.95rem; }
+.subj-card .sc-desc { font-size: 0.72rem; color: var(--muted); margin-top: 3px; }
+.subj-card .sc-tag { display: inline-block; font-size: 0.62rem; font-family: monospace; padding: 2px 8px; border-radius: 3px; margin-top: 8px; font-weight: 700; }
+
+/* TOPICS LIST */
+.back-btn { display: flex; align-items: center; gap: 8px; background: none; border: none; color: var(--muted); cursor: pointer; font-family: var(--font-body); font-size: 0.85rem; margin-bottom: 20px; padding: 0; }
+.back-btn:hover { color: var(--accent); }
+.topic-list { display: flex; flex-direction: column; gap: 8px; }
+.topic-item { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: space-between; }
+.topic-item:hover { border-color: var(--accent); background: rgba(0,229,255,0.03); }
+.topic-item .ti-name { font-weight: 600; font-size: 0.92rem; }
+.topic-item .ti-class { font-size: 0.7rem; color: var(--muted); margin-top: 2px; font-family: monospace; }
+.topic-item .ti-arrow { color: var(--muted); }
+
+/* TOPIC CONTENT */
+.content-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 16px; }
+.content-card h2 { font-family: var(--font-display); font-size: 1.8rem; color: var(--accent); margin-bottom: 4px; }
+.content-card .subject-badge { font-size: 0.7rem; font-family: monospace; color: var(--muted); margin-bottom: 16px; display: block; }
+.content-section { margin-bottom: 18px; }
+.content-section h3 { font-size: 0.75rem; font-family: monospace; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+.definition-box { background: var(--surface); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 14px 16px; font-size: 0.88rem; line-height: 1.6; }
+.key-points { display: flex; flex-direction: column; gap: 6px; }
+.key-point { display: flex; gap: 10px; align-items: flex-start; font-size: 0.85rem; color: var(--muted); }
+.key-point::before { content: '›'; color: var(--accent); font-weight: 700; flex-shrink: 0; }
+.formula-list { display: flex; flex-direction: column; gap: 8px; }
+.formula-item { background: var(--surface); border-radius: 8px; padding: 12px 14px; }
+.formula-name { font-size: 0.72rem; color: var(--muted); margin-bottom: 4px; }
+.formula-eq { font-family: monospace; font-size: 0.95rem; color: var(--accent3); margin-bottom: 4px; }
+.formula-desc { font-size: 0.75rem; color: var(--muted); }
+.tip-box { background: rgba(185,255,78,0.06); border: 1px solid var(--accent3); border-radius: 10px; padding: 14px 16px; font-size: 0.82rem; color: var(--accent3); line-height: 1.5; }
+.tip-box strong { display: block; margin-bottom: 4px; }
+.loading-content { text-align: center; padding: 40px; color: var(--muted); }
+.loading-content .spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* MCQ SECTION */
+.mcq-controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+.btn-generate { padding: 12px 24px; background: var(--accent2); border: none; border-radius: 10px; color: #fff; font-size: 0.92rem; font-weight: 700; cursor: pointer; font-family: var(--font-body); transition: all 0.2s; }
+.btn-generate:hover { opacity: 0.88; transform: translateY(-1px); }
+.btn-more { padding: 12px 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 0.92rem; font-weight: 600; cursor: pointer; font-family: var(--font-body); transition: all 0.2s; }
+.btn-more:hover { border-color: var(--accent); color: var(--accent); }
+.mcq-list { display: flex; flex-direction: column; gap: 14px; }
+.mcq-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; }
+.mcq-num { font-size: 0.68rem; font-family: monospace; color: var(--muted); margin-bottom: 8px; }
+.mcq-q { font-size: 0.95rem; font-weight: 500; line-height: 1.6; margin-bottom: 14px; }
+.mcq-opts { display: flex; flex-direction: column; gap: 8px; }
+.mcq-opt { background: var(--surface); border: 1.5px solid var(--border); border-radius: 9px; padding: 10px 14px; cursor: pointer; transition: all 0.2s; display: flex; gap: 10px; align-items: center; font-size: 0.88rem; }
+.mcq-opt:hover:not(.disabled) { border-color: var(--accent); background: rgba(0,229,255,0.04); }
+.mcq-opt .ol { background: var(--border); color: #888; border-radius: 5px; padding: 2px 7px; font-size: 0.72rem; font-weight: 700; min-width: 24px; text-align: center; font-family: monospace; }
+.mcq-opt.correct { border-color: #4caf50; background: #071a07; }
+.mcq-opt.correct .ol { background: #4caf50; color: #000; }
+.mcq-opt.wrong { border-color: var(--accent2); background: #1a0707; }
+.mcq-opt.wrong .ol { background: var(--accent2); color: #fff; }
+.mcq-opt.disabled { cursor: default; pointer-events: none; }
+.mcq-feedback { margin-top: 12px; padding: 12px 14px; border-radius: 9px; display: none; font-size: 0.82rem; line-height: 1.6; }
+.mcq-feedback.correct { background: #071a07; border: 1px solid #4caf50; color: #a5d6a7; }
+.mcq-feedback.wrong { background: #1a0707; border: 1px solid var(--accent2); color: #ef9a9a; }
+.mcq-feedback .verd { font-weight: 700; margin-bottom: 4px; }
+
+/* PDF UPLOAD */
+.pdf-section { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 20px; }
+.pdf-section h3 { font-family: var(--font-display); font-size: 1.4rem; margin-bottom: 6px; }
+.pdf-section p { color: var(--muted); font-size: 0.82rem; margin-bottom: 16px; }
+.pdf-drop { border: 2px dashed var(--border); border-radius: 12px; padding: 30px; text-align: center; cursor: pointer; transition: all 0.2s; }
+.pdf-drop:hover { border-color: var(--accent); background: rgba(0,229,255,0.03); }
+.pdf-drop .pd-icon { font-size: 2rem; margin-bottom: 8px; }
+.pdf-drop .pd-text { font-size: 0.85rem; color: var(--muted); }
+.pdf-drop .pd-sub { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
+.pdf-loaded { background: rgba(185,255,78,0.06); border: 1px solid var(--accent3); border-radius: 10px; padding: 12px 16px; display: none; align-items: center; gap: 12px; margin-top: 12px; }
+.pdf-loaded .pf-name { font-size: 0.85rem; font-weight: 600; color: var(--accent3); }
+.pdf-loaded .pf-pages { font-size: 0.72rem; color: var(--muted); }
+#pdfFileInput { display: none; }
+
+/* LEADERBOARD */
+.lb-item { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; }
+.lb-rank { font-family: var(--font-display); font-size: 1.4rem; min-width: 32px; text-align: center; }
+.lb-av { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; color: #000; flex-shrink: 0; }
+.lb-name { font-weight: 700; font-size: 0.88rem; }
+.lb-detail { font-size: 0.7rem; color: var(--muted); margin-top: 1px; }
+.lb-score { margin-left: auto; font-family: var(--font-display); font-size: 1.4rem; color: var(--accent); }
+.lb-you { border-color: var(--accent); background: rgba(0,229,255,0.04); }
+
+/* PROGRESS */
+.prog-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin-bottom: 24px; }
+.prog-box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
+.prog-box .pb-label { font-size: 0.72rem; color: var(--muted); margin-bottom: 6px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+.prog-box .pb-val { font-family: var(--font-display); font-size: 1.8rem; }
+.prog-box .pb-bar { height: 4px; background: var(--border); border-radius: 2px; margin-top: 10px; overflow: hidden; }
+.prog-box .pb-fill { height: 100%; border-radius: 2px; transition: width 0.5s; }
+.history-item { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 13px 16px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+.hi-topic { font-weight: 600; font-size: 0.85rem; }
+.hi-date { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
+.hi-score { font-family: var(--font-display); font-size: 1.3rem; }
+
+/* UTILS */
+@keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+.empty { text-align: center; color: var(--muted); font-size: 0.85rem; padding: 28px; }
+.loading-bar { text-align: center; padding: 20px; color: var(--muted); font-size: 0.85rem; }
+.section-head { font-family: var(--font-display); font-size: 1.6rem; letter-spacing: 1px; margin-bottom: 14px; }
+
+@media(max-width:520px) {
+  .feat-grid { grid-template-columns: 1fr; }
+  .subj-grid { grid-template-columns: 1fr; }
+  .stats-row { grid-template-columns: repeat(3,1fr); gap: 8px; }
+  .prog-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-logo" onclick="goHome()">StudyJNS</div>
+  <div class="nav-right">
+    <div class="nav-auth-btns" id="navAuthBtns">
+      <button class="btn-sm btn-outline" onclick="openAuth('login')">Login</button>
+      <button class="btn-sm btn-filled" onclick="openAuth('signup')">Sign Up</button>
+    </div>
+    <div class="nav-avatar" id="navAvatar"></div>
+    <button class="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- SLIDE MENU -->
+<div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
+<div class="slide-menu" id="slideMenu">
+  <button class="menu-close" onclick="closeMenu()">✕</button>
+  <div class="menu-section">Subjects</div>
+  <div class="menu-item" onclick="goToSubject('physics')"><span class="mi-icon">⚡</span> Physics</div>
+  <div class="menu-item" onclick="goToSubject('chemistry')"><span class="mi-icon">🧪</span> Chemistry</div>
+  <div class="menu-item" onclick="goToSubject('biology')"><span class="mi-icon">🧬</span> Biology</div>
+  <div class="menu-item" onclick="goToSubject('math')"><span class="mi-icon">📐</span> Mathematics</div>
+  <div class="menu-item" onclick="goToSubject('cs')"><span class="mi-icon">💻</span> Computer Science</div>
+  <div class="menu-item" onclick="goToSubject('english')"><span class="mi-icon">📝</span> English</div>
+  <div class="menu-divider"></div>
+  <div class="menu-section">Tools</div>
+  <div class="menu-item" onclick="showAppTab('pdf'); closeMenu()"><span class="mi-icon">📄</span> PDF MCQ Generator</div>
+  <div class="menu-item" onclick="showAppTab('progress'); closeMenu()"><span class="mi-icon">📊</span> My Progress</div>
+  <div class="menu-item" onclick="showAppTab('leaderboard'); closeMenu()"><span class="mi-icon">🏆</span> Leaderboard</div>
+  <div class="menu-divider"></div>
+  <div class="menu-item" id="menuLogout" style="display:none;color:var(--accent2)" onclick="logout()"><span class="mi-icon">🚪</span> Logout</div>
+</div>
+
+<!-- ===== LANDING ===== -->
+<div id="landing" class="screen active">
+  <div class="hero">
+    <div class="hero-tag">ECAT · MDCAT · FREE · PAKISTAN</div>
+    <h1>STUDY<br><span>SMARTER</span><br>NOT HARDER</h1>
+    <p class="hero-sub">Pakistan's smartest entry test prep platform. AI-powered MCQs, chapter-by-chapter learning, and infinite practice — all free.</p>
+    <div class="hero-btns">
+      <button class="btn-hero btn-hero-primary" onclick="openAuth('signup')">Start Free →</button>
+      <button class="btn-hero btn-hero-secondary" onclick="scrollFeatures()">See How It Works</button>
+    </div>
+  </div>
+
+  <div class="quote-strip">
+    "The expert in anything was once a beginner." — <strong>Start today, thank yourself in July.</strong>
+  </div>
+
+  <div class="features" id="features">
+    <div class="section-title">Everything You Need</div>
+    <div class="section-sub">Built specifically for Pakistani ECAT & MDCAT students</div>
+    <div class="feat-grid">
+      <div class="feat-card"><div class="feat-icon">🧠</div><div class="feat-title">Learn by Topic</div><div class="feat-desc">Definitions, formulas, key points — organized by chapter for class 11 & 12.</div></div>
+      <div class="feat-card"><div class="feat-icon">🤖</div><div class="feat-title">AI MCQ Generator</div><div class="feat-desc">Hard, exam-level MCQs generated by AI. Wrong answer? Get a full explanation.</div></div>
+      <div class="feat-card"><div class="feat-icon">📄</div><div class="feat-title">PDF Upload</div><div class="feat-desc">Upload any book or notes. AI generates infinite MCQs from your own material.</div></div>
+      <div class="feat-card"><div class="feat-icon">🏆</div><div class="feat-title">Leaderboard</div><div class="feat-desc">Compete with students across Pakistan. See where you rank.</div></div>
+    </div>
+  </div>
+
+  <div class="subjects-strip">
+    <h2>6 Subjects. Every Chapter.</h2>
+    <div class="subj-row">
+      <div class="subj-pill" style="color:#00e5ff;border-color:#00e5ff;background:rgba(0,229,255,0.08)" onclick="openAuth('signup')">⚡ Physics</div>
+      <div class="subj-pill" style="color:#ff4d6d;border-color:#ff4d6d;background:rgba(255,77,109,0.08)" onclick="openAuth('signup')">🧪 Chemistry</div>
+      <div class="subj-pill" style="color:#b9ff4e;border-color:#b9ff4e;background:rgba(185,255,78,0.08)" onclick="openAuth('signup')">🧬 Biology</div>
+      <div class="subj-pill" style="color:#ffb347;border-color:#ffb347;background:rgba(255,179,71,0.08)" onclick="openAuth('signup')">📐 Math</div>
+      <div class="subj-pill" style="color:#c084fc;border-color:#c084fc;background:rgba(192,132,252,0.08)" onclick="openAuth('signup')">💻 CS</div>
+      <div class="subj-pill" style="color:#f472b6;border-color:#f472b6;background:rgba(244,114,182,0.08)" onclick="openAuth('signup')">📝 English</div>
+    </div>
+  </div>
+
+  <div class="motivation">
+    <div class="quote-big">"Success is the sum of small efforts repeated day in and day out."</div>
+    <div class="quote-attr">— Robert Collier</div>
+    <div class="quotes-list">
+      <div class="q-item">"The pain of studying is temporary. The pain of not studying is permanent." <strong>— Every ECAT topper ever</strong></div>
+      <div class="q-item">"You don't have to be brilliant. You just have to be consistent." <strong>— Start with 3 hours today</strong></div>
+      <div class="q-item">"Every question you practice today is one less mistake in July." <strong>— StudyJNS</strong></div>
+    </div>
+  </div>
+
+  <div class="cta">
+    <h2>Ready to Start?</h2>
+    <p>Free forever. No credit card. Just sign up and start learning.</p>
+    <button class="btn-hero btn-hero-primary" onclick="openAuth('signup')">Create Free Account →</button>
+  </div>
+
+  <div style="text-align:center;padding:20px;color:var(--muted);font-size:0.72rem;font-family:monospace;border-top:1px solid var(--border)">
+    StudyJNS · Built for Pakistani Students · ECAT & MDCAT 2026
+  </div>
+</div>
+
+<!-- ===== AUTH MODAL ===== -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeAuth()">✕</button>
+    <div class="modal-logo">StudyJNS</div>
+    <div class="modal-sub">ECAT · MDCAT Prep Platform</div>
+    <div class="auth-tabs">
+      <div class="auth-tab active" onclick="switchAuthTab('login')">Login</div>
+      <div class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</div>
+    </div>
+    <div id="mLoginForm">
+      <div class="form-group"><label>Email</label><input type="email" id="mLoginEmail" placeholder="you@gmail.com"></div>
+      <div class="form-group"><label>Password</label><input type="password" id="mLoginPass" placeholder="••••••••"></div>
+      <button class="btn-primary" onclick="doLogin()">Login</button>
+    </div>
+    <div id="mSignupForm" style="display:none">
+      <div class="form-group"><label>Full Name</label><input type="text" id="mSignupName" placeholder="Your name"></div>
+      <div class="form-group"><label>Email</label><input type="email" id="mSignupEmail" placeholder="you@gmail.com"></div>
+      <div class="form-group"><label>Password</label><input type="password" id="mSignupPass" placeholder="Min 6 characters"></div>
+      <button class="btn-primary" onclick="doSignup()">Create Account</button>
+    </div>
+    <div class="divider"><span>or</span></div>
+    <button class="btn-google" onclick="doGoogle()">
+      <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Continue with Google
+    </button>
+    <div class="auth-msg" id="mAuthMsg"></div>
+  </div>
+</div>
+
+<!-- ===== APP ===== -->
+<div id="app" class="screen">
+  <div class="app-main">
+
+    <!-- DASHBOARD -->
+    <div id="tabDashboard">
+      <div class="welcome-card">
+        <div class="wc-name" id="wcName">Hey! 👋</div>
+        <div class="wc-sub">ECAT · MDCAT · July 2026 Target</div>
+        <div class="wc-quote" id="wcQuote">"Every expert was once a beginner. Start now."</div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-box"><div class="sn" id="stTotal" style="color:var(--accent)">0</div><div class="sl">Questions</div></div>
+        <div class="stat-box"><div class="sn" id="stAcc" style="color:var(--accent3)">0%</div><div class="sl">Accuracy</div></div>
+        <div class="stat-box"><div class="sn" id="stQuizzes" style="color:var(--accent4)">0</div><div class="sl">Quizzes</div></div>
+      </div>
+      <div class="section-head">Choose a Subject</div>
+      <div class="subj-grid" id="subjGrid"></div>
+    </div>
+
+    <!-- TOPICS -->
+    <div id="tabTopics" style="display:none">
+      <button class="back-btn" onclick="backToDashboard()">← Back</button>
+      <div class="section-head" id="topicsTitle">Topics</div>
+      <div class="topic-list" id="topicsList"></div>
+    </div>
+
+    <!-- TOPIC CONTENT -->
+    <div id="tabContent" style="display:none">
+      <button class="back-btn" id="contentBackBtn" onclick="backToTopics()">← Back</button>
+      <div id="contentArea"></div>
+      <div id="mcqArea"></div>
+    </div>
+
+    <!-- PDF GENERATOR -->
+    <div id="tabPdf" style="display:none">
+      <div class="section-head">📄 PDF MCQ Generator</div>
+      <div class="pdf-section">
+        <h3>Upload Your Book or Notes</h3>
+        <p>Upload any PDF — textbook, notes, chapter — and AI will generate infinite hard MCQs from it.</p>
+        <div class="pdf-drop" onclick="document.getElementById('pdfFileInput').click()">
+          <div class="pd-icon">📄</div>
+          <div class="pd-text">Tap to upload PDF</div>
+          <div class="pd-sub">Any textbook, notes, or chapter</div>
+        </div>
+        <input type="file" id="pdfFileInput" accept=".pdf" onchange="handlePdfUpload(event)">
+        <div class="pdf-loaded" id="pdfLoaded">
+          <span style="font-size:1.4rem">✅</span>
+          <div><div class="pf-name" id="pdfName"></div><div class="pf-pages" id="pdfPages"></div></div>
+        </div>
+      </div>
+      <div id="pdfMcqControls" style="display:none">
+        <div class="mcq-controls">
+          <button class="btn-generate" onclick="generatePdfMcqs()">🤖 Generate MCQs</button>
+          <button class="btn-more" onclick="generateMorePdfMcqs()">+ Generate More</button>
+        </div>
+      </div>
+      <div id="pdfMcqList"></div>
+    </div>
+
+    <!-- PROGRESS -->
+    <div id="tabProgress" style="display:none">
+      <div class="section-head">📊 My Progress</div>
+      <div class="prog-grid">
+        <div class="prog-box"><div class="pb-label">Total Questions</div><div class="pb-val" id="pTotal" style="color:var(--accent)">0</div><div class="pb-bar"><div class="pb-fill" id="pTotalBar" style="width:0%;background:var(--accent)"></div></div></div>
+        <div class="prog-box"><div class="pb-label">Accuracy</div><div class="pb-val" id="pAcc" style="color:var(--accent3)">0%</div><div class="pb-bar"><div class="pb-fill" id="pAccBar" style="width:0%;background:var(--accent3)"></div></div></div>
+        <div class="prog-box"><div class="pb-label">Quizzes Done</div><div class="pb-val" id="pQuizzes" style="color:var(--accent4)">0</div><div class="pb-bar"><div class="pb-fill" id="pQuizzesBar" style="width:0%;background:var(--accent4)"></div></div></div>
+        <div class="prog-box"><div class="pb-label">Best Score</div><div class="pb-val" id="pBest" style="color:var(--accent2)">0%</div><div class="pb-bar"><div class="pb-fill" id="pBestBar" style="width:0%;background:var(--accent2)"></div></div></div>
+      </div>
+      <div class="section-head">Recent Activity</div>
+      <div id="historyList"><div class="empty">No activity yet. Start a quiz! 📝</div></div>
+    </div>
+
+    <!-- LEADERBOARD -->
+    <div id="tabLeaderboard" style="display:none">
+      <div class="section-head">🏆 Leaderboard</div>
+      <div id="lbList"><div class="loading-bar">Loading...</div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, orderBy, limit, getDocs, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAYyHIKkSE0HP8Kz2_B4P1jHx5oYA7i9Vs",
+  authDomain: "studyjns.firebaseapp.com",
+  projectId: "studyjns",
+  storageBucket: "studyjns.firebasestorage.app",
+  messagingSenderId: "692856207954",
+  appId: "1:692856207954:web:30cad3b5d0d39ccac07d8b"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const gProvider = new GoogleAuthProvider();
+
+// SUBJECTS DATA
+const subjects = {
+  physics: {
+    name: 'Physics', icon: '⚡', color: '#00e5ff', tag: 'ECAT + MDCAT',
+    topics: [
+      { name: 'Measurements & Units', class: 'Class 11' },
+      { name: 'Vectors & Scalars', class: 'Class 11' },
+      { name: 'Kinematics', class: 'Class 11' },
+      { name: "Newton's Laws of Motion", class: 'Class 11' },
+      { name: 'Work, Energy & Power', class: 'Class 11' },
+      { name: 'Circular Motion', class: 'Class 11' },
+      { name: 'Fluid Mechanics', class: 'Class 11' },
+      { name: 'Waves & Sound', class: 'Class 11' },
+      { name: 'Thermodynamics', class: 'Class 11' },
+      { name: 'Electrostatics', class: 'Class 12' },
+      { name: 'Current Electricity', class: 'Class 12' },
+      { name: 'Magnetism & Electromagnetism', class: 'Class 12' },
+      { name: 'Electromagnetic Induction', class: 'Class 12' },
+      { name: 'Alternating Current', class: 'Class 12' },
+      { name: 'Optics & Light', class: 'Class 12' },
+      { name: 'Atomic & Nuclear Physics', class: 'Class 12' },
+    ]
+  },
+  chemistry: {
+    name: 'Chemistry', icon: '🧪', color: '#ff4d6d', tag: 'ECAT + MDCAT',
+    topics: [
+      { name: 'Atomic Structure', class: 'Class 11' },
+      { name: 'Chemical Bonding', class: 'Class 11' },
+      { name: 'States of Matter', class: 'Class 11' },
+      { name: 'Stoichiometry', class: 'Class 11' },
+      { name: 'Thermochemistry', class: 'Class 11' },
+      { name: 'Chemical Equilibrium', class: 'Class 11' },
+      { name: 'Acids, Bases & Salts', class: 'Class 11' },
+      { name: 'Electrochemistry', class: 'Class 12' },
+      { name: 'Reaction Kinetics', class: 'Class 12' },
+      { name: 'Organic Chemistry Basics', class: 'Class 12' },
+      { name: 'Hydrocarbons', class: 'Class 12' },
+      { name: 'Alcohols & Ethers', class: 'Class 12' },
+      { name: 'Aldehydes & Ketones', class: 'Class 12' },
+      { name: 'Carboxylic Acids', class: 'Class 12' },
+      { name: 'Macromolecules', class: 'Class 12' },
+    ]
+  },
+  biology: {
+    name: 'Biology', icon: '🧬', color: '#b9ff4e', tag: 'MDCAT',
+    topics: [
+      { name: 'Cell Structure & Function', class: 'Class 11' },
+      { name: 'Biological Molecules', class: 'Class 11' },
+      { name: 'Enzymes', class: 'Class 11' },
+      { name: 'Cell Division', class: 'Class 11' },
+      { name: 'Nutrition', class: 'Class 11' },
+      { name: 'Gaseous Exchange', class: 'Class 11' },
+      { name: 'Transport in Plants', class: 'Class 11' },
+      { name: 'Transport in Animals', class: 'Class 11' },
+      { name: 'Homeostasis', class: 'Class 12' },
+      { name: 'Nervous System', class: 'Class 12' },
+      { name: 'Endocrine System', class: 'Class 12' },
+      { name: 'Reproduction', class: 'Class 12' },
+      { name: 'Genetics & Inheritance', class: 'Class 12' },
+      { name: 'Evolution', class: 'Class 12' },
+      { name: 'Biotechnology', class: 'Class 12' },
+    ]
+  },
+  math: {
+    name: 'Mathematics', icon: '📐', color: '#ffb347', tag: 'ECAT',
+    topics: [
+      { name: 'Sets & Functions', class: 'Class 11' },
+      { name: 'Number Systems', class: 'Class 11' },
+      { name: 'Algebra & Factorization', class: 'Class 11' },
+      { name: 'Matrices & Determinants', class: 'Class 11' },
+      { name: 'Quadratic Equations', class: 'Class 11' },
+      { name: 'Sequences & Series', class: 'Class 11' },
+      { name: 'Permutations & Combinations', class: 'Class 11' },
+      { name: 'Trigonometry Basics', class: 'Class 11' },
+      { name: 'Trigonometric Identities', class: 'Class 11' },
+      { name: 'Conic Sections', class: 'Class 12' },
+      { name: 'Limits & Continuity', class: 'Class 12' },
+      { name: 'Differentiation', class: 'Class 12' },
+      { name: 'Integration', class: 'Class 12' },
+      { name: 'Differential Equations', class: 'Class 12' },
+      { name: 'Statistics & Probability', class: 'Class 12' },
+    ]
+  },
+  cs: {
+    name: 'Computer Science', icon: '💻', color: '#c084fc', tag: 'Pre-CS',
+    topics: [
+      { name: 'Introduction to Computing', class: 'Class 11' },
+      { name: 'Number Systems', class: 'Class 11' },
+      { name: 'Boolean Algebra & Logic Gates', class: 'Class 11' },
+      { name: 'Computer Architecture', class: 'Class 11' },
+      { name: 'Operating Systems', class: 'Class 11' },
+      { name: 'Programming Basics (C++)', class: 'Class 11' },
+      { name: 'Control Structures', class: 'Class 11' },
+      { name: 'Arrays & Functions', class: 'Class 12' },
+      { name: 'Object Oriented Programming', class: 'Class 12' },
+      { name: 'Data Structures', class: 'Class 12' },
+      { name: 'Algorithms & Complexity', class: 'Class 12' },
+      { name: 'Database Fundamentals', class: 'Class 12' },
+      { name: 'Networking Basics', class: 'Class 12' },
+      { name: 'Web Technologies', class: 'Class 12' },
+    ]
+  },
+  english: {
+    name: 'English', icon: '📝', color: '#f472b6', tag: 'ECAT + MDCAT',
+    topics: [
+      { name: 'Grammar: Parts of Speech', class: 'Class 11' },
+      { name: 'Tenses & Verb Forms', class: 'Class 11' },
+      { name: 'Active & Passive Voice', class: 'Class 11' },
+      { name: 'Direct & Indirect Speech', class: 'Class 11' },
+      { name: 'Sentence Structure', class: 'Class 11' },
+      { name: 'Prepositions & Articles', class: 'Class 11' },
+      { name: 'Vocabulary & Synonyms', class: 'Class 12' },
+      { name: 'Antonyms & Word Meanings', class: 'Class 12' },
+      { name: 'Reading Comprehension', class: 'Class 12' },
+      { name: 'Sentence Correction', class: 'Class 12' },
+      { name: 'Analogies & Pair of Words', class: 'Class 12' },
+    ]
+  }
+};
+
+const quotes = [
+  '"Every question you practice today is one less mistake in July."',
+  '"The secret to getting ahead is getting started."',
+  '"You don\'t have to be great to start, but you have to start to be great."',
+  '"Consistency is what transforms average into excellence."',
+  '"ECAT/MDCAT is not about being smart. It\'s about being prepared."',
+];
+
+let currentUser = null;
+let currentSubject = null;
+let currentTopic = null;
+let pdfText = '';
+let pdfPreviousQ = [];
+let topicPreviousQ = [];
+
+// PDF.js setup
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+// Handle Google redirect result FIRST before auth state
+getRedirectResult(auth).then(async (result) => {
+  if (result?.user) {
+    await createUserDoc(result.user);
+  }
+}).catch((e) => { console.log('Redirect result error:', e); });
+
+// AUTH STATE
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    currentUser = user;
+    await createUserDoc(user);
+    showApp(user);
+  } else {
+    currentUser = null;
+    document.getElementById('navAuthBtns').style.display = 'flex';
+    document.getElementById('navAvatar').style.display = 'none';
+    document.getElementById('menuLogout').style.display = 'none';
+    showScreen('landing');
+  }
+});
+
+async function createUserDoc(user) {
+  const ref = doc(db, 'users', user.uid);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) {
+    await setDoc(ref, {
+      name: user.displayName || 'Student',
+      email: user.email,
+      totalQ: 0, correct: 0, quizzes: 0, bestScore: 0,
+      joined: serverTimestamp(), lastActive: serverTimestamp()
+    });
+  }
+}
+
+function showApp(user) {
+  document.getElementById('authModal').classList.remove('open');
+  document.getElementById('navAuthBtns').style.display = 'none';
+  const av = document.getElementById('navAvatar');
+  av.style.display = 'flex'; av.style.width='32px'; av.style.height='32px';
+  av.textContent = (user.displayName||user.email||'S')[0].toUpperCase();
+  document.getElementById('menuLogout').style.display = 'flex';
+  const name = ((user.displayName||user.email||'Student').split(' ')[0]).split('@')[0];
+  document.getElementById('wcName').textContent = `Hey, ${name} 👋`;
+  document.getElementById('wcQuote').textContent = quotes[Math.floor(Math.random()*quotes.length)];
+  renderSubjectGrid();
+  document.getElementById('landing').classList.remove('active');
+  document.getElementById('landing').style.display = 'none';
+  document.getElementById('app').classList.add('active');
+  document.getElementById('app').style.display = 'block';
+  ['tabDashboard','tabTopics','tabContent','tabPdf','tabProgress','tabLeaderboard'].forEach(t => { document.getElementById(t).style.display='none'; });
+  document.getElementById('tabDashboard').style.display = 'block';
+  window.scrollTo(0,0);
+  loadStats();
+}
+
+// SCREENS
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+window.goHome = () => {
+  if (currentUser) { showScreen('app'); showAppTab('dashboard'); }
+  else showScreen('landing');
+};
+
+function showAppTab(tab) {
+  ['tabDashboard','tabTopics','tabContent','tabPdf','tabProgress','tabLeaderboard'].forEach(t => {
+    document.getElementById(t).style.display = 'none';
+  });
+  const map = { dashboard:'tabDashboard', topics:'tabTopics', content:'tabContent', pdf:'tabPdf', progress:'tabProgress', leaderboard:'tabLeaderboard' };
+  document.getElementById(map[tab]).style.display = 'block';
+  if (tab === 'progress') loadProgress();
+  if (tab === 'leaderboard') loadLeaderboard();
+}
+window.showAppTab = showAppTab;
+
+// MENU
+window.toggleMenu = () => {
+  document.getElementById('slideMenu').classList.toggle('open');
+  document.getElementById('menuOverlay').classList.toggle('open');
+};
+window.closeMenu = () => {
+  document.getElementById('slideMenu').classList.remove('open');
+  document.getElementById('menuOverlay').classList.remove('open');
+};
+
+window.goToSubject = (subjectId) => {
+  closeMenu();
+  if (!currentUser) { openAuth('signup'); return; }
+  showSubjectTopics(subjectId);
+};
+
+// AUTH
+window.openAuth = (tab) => {
+  document.getElementById('authModal').classList.add('open');
+  switchAuthTab(tab);
+};
+window.closeAuth = () => document.getElementById('authModal').classList.remove('open');
+window.switchAuthTab = (tab) => {
+  document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', (i===0&&tab==='login')||(i===1&&tab==='signup')));
+  document.getElementById('mLoginForm').style.display = tab==='login'?'block':'none';
+  document.getElementById('mSignupForm').style.display = tab==='signup'?'block':'none';
+  document.getElementById('mAuthMsg').textContent = '';
+};
+
+function setAuthMsg(m) { document.getElementById('mAuthMsg').textContent = m; }
+function friendlyError(code) {
+  const map = {'auth/wrong-password':'Wrong password','auth/user-not-found':'No account found','auth/email-already-in-use':'Email already registered','auth/weak-password':'Password too short (min 6)','auth/invalid-email':'Invalid email','auth/invalid-credential':'Wrong email or password'};
+  return map[code] || 'Something went wrong. Try again.';
+}
+
+window.doLogin = async () => {
+  const email = document.getElementById('mLoginEmail').value.trim();
+  const pass = document.getElementById('mLoginPass').value;
+  if (!email || !pass) return setAuthMsg('Fill in all fields');
+  setAuthMsg('Logging in...');
+  try {
+    const cred = await signInWithEmailAndPassword(auth, email, pass);
+    showApp(cred.user);
+  } catch(e) { setAuthMsg(friendlyError(e.code)); }
+};
+
+window.doSignup = async () => {
+  const name = document.getElementById('mSignupName').value.trim();
+  const email = document.getElementById('mSignupEmail').value.trim();
+  const pass = document.getElementById('mSignupPass').value;
+  if (!name || !email || !pass) return setAuthMsg('Fill in all fields');
+  setAuthMsg('Creating account...');
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, email, pass);
+    await updateProfile(cred.user, { displayName: name });
+    await createUserDoc({ ...cred.user, displayName: name });
+    showApp({ ...cred.user, displayName: name });
+  } catch(e) { setAuthMsg(friendlyError(e.code)); }
+};
+
+window.doGoogle = async () => {
+  setAuthMsg('Redirecting to Google...');
+  try { await signInWithRedirect(auth, gProvider); }
+  catch(e) { setAuthMsg(friendlyError(e.code)); }
+};
+
+window.logout = async () => { await signOut(auth); closeMenu(); };
+window.scrollFeatures = () => document.getElementById('features').scrollIntoView({behavior:'smooth'});
+
+// SUBJECTS
+function renderSubjectGrid() {
+  const grid = document.getElementById('subjGrid');
+  grid.innerHTML = Object.entries(subjects).map(([id, s]) => `
+    <div class="subj-card" onclick="showSubjectTopics('${id}')" style="border-top:3px solid ${s.color}">
+      <div class="sc-icon">${s.icon}</div>
+      <div class="sc-name">${s.name}</div>
+      <div class="sc-desc">${s.topics.length} topics · Class 11 & 12</div>
+      <div class="sc-tag" style="color:${s.color};border:1px solid ${s.color};background:${s.color}18">${s.tag}</div>
+    </div>`).join('');
+}
+
+window.showSubjectTopics = (subjectId) => {
+  if (!currentUser) { openAuth('signup'); return; }
+  currentSubject = subjectId;
+  const s = subjects[subjectId];
+  document.getElementById('topicsTitle').textContent = `${s.icon} ${s.name}`;
+  document.getElementById('topicsList').innerHTML = s.topics.map((t,i) => `
+    <div class="topic-item" onclick="showTopicContent('${subjectId}', ${i})">
+      <div><div class="ti-name">${t.name}</div><div class="ti-class">${t.class}</div></div>
+      <span class="ti-arrow">→</span>
+    </div>`).join('');
+  showScreen('app');
+  showAppTab('topics');
+};
+
+window.backToDashboard = () => { showAppTab('dashboard'); };
+window.backToTopics = () => { showAppTab('topics'); topicPreviousQ = []; };
+
+// TOPIC CONTENT
+window.showTopicContent = async (subjectId, topicIndex) => {
+  currentTopic = { subjectId, topicIndex };
+  topicPreviousQ = [];
+  const s = subjects[subjectId];
+  const t = s.topics[topicIndex];
+  showAppTab('content');
+  document.getElementById('contentBackBtn').onclick = () => backToTopics();
+
+  document.getElementById('contentArea').innerHTML = `
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <div>Loading ${t.name}...</div>
+    </div>`;
+  document.getElementById('mcqArea').innerHTML = '';
+
+  try {
+    const res = await fetch('https://study-jns.vercel.app/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'topic_content', topic: t.name, subject: s.name })
+    });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error);
+    renderTopicContent(data.data, s.color);
+  } catch(e) {
+    document.getElementById('contentArea').innerHTML = `<div class="empty">Failed to load content. Check your connection and try again.</div>`;
+  }
+};
+
+function renderTopicContent(d, color) {
+  document.getElementById('contentArea').innerHTML = `
+    <div class="content-card">
+      <h2>${d.title}</h2>
+      <span class="subject-badge">${d.subject}</span>
+      <div class="content-section">
+        <h3>Definition</h3>
+        <div class="definition-box">${d.definition}</div>
+      </div>
+      ${d.keyPoints?.length ? `<div class="content-section">
+        <h3>Key Points</h3>
+        <div class="key-points">${d.keyPoints.map(p=>`<div class="key-point">${p}</div>`).join('')}</div>
+      </div>` : ''}
+      ${d.formulas?.length ? `<div class="content-section">
+        <h3>Formulas</h3>
+        <div class="formula-list">${d.formulas.map(f=>`
+          <div class="formula-item">
+            <div class="formula-name">${f.name}</div>
+            <div class="formula-eq">${f.formula}</div>
+            <div class="formula-desc">${f.description}</div>
+          </div>`).join('')}</div>
+      </div>` : ''}
+      ${d.ecat_mdcat_tip ? `<div class="content-section">
+        <h3>ECAT/MDCAT Tip</h3>
+        <div class="tip-box"><strong>⚡ Exam Tip</strong>${d.ecat_mdcat_tip}</div>
+      </div>` : ''}
+    </div>`;
+
+  document.getElementById('mcqArea').innerHTML = `
+    <div class="mcq-controls">
+      <button class="btn-generate" onclick="generateTopicMcqs()">🤖 Generate Hard MCQs</button>
+    </div>
+    <div id="topicMcqList"></div>`;
+}
+
+// GENERATE TOPIC MCQs
+window.generateTopicMcqs = async () => {
+  const { subjectId, topicIndex } = currentTopic;
+  const s = subjects[subjectId];
+  const t = s.topics[topicIndex];
+  const listEl = document.getElementById('topicMcqList');
+  listEl.innerHTML = `<div class="loading-content"><div class="spinner"></div><div>Generating hard MCQs...</div></div>`;
+  document.querySelector('.btn-generate').disabled = true;
+
+  try {
+    const res = await fetch('https://study-jns.vercel.app/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'topic_mcq', topic: t.name, subject: s.name, count: 10, previousQuestions: topicPreviousQ })
+    });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error);
+    topicPreviousQ.push(...data.data.map(q => q.q));
+    renderMcqs(data.data, 'topicMcqList', true);
+    document.querySelector('.btn-generate').textContent = '+ Generate More';
+    document.querySelector('.btn-generate').disabled = false;
+    saveQuizResult(t.name, data.data.length);
+  } catch(e) {
+    listEl.innerHTML = `<div class="empty">Failed to generate MCQs. Try again.</div>`;
+    document.querySelector('.btn-generate').disabled = false;
+  }
+};
+
+// PDF UPLOAD
+window.handlePdfUpload = async (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+  document.getElementById('pdfName').textContent = file.name;
+  document.getElementById('pdfPages').textContent = 'Reading PDF...';
+  document.getElementById('pdfLoaded').style.display = 'flex';
+
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    let text = '';
+    const maxPages = Math.min(pdf.numPages, 20);
+    for (let i = 1; i <= maxPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      text += content.items.map(item => item.str).join(' ') + '\n';
+    }
+    pdfText = text;
+    pdfPreviousQ = [];
+    document.getElementById('pdfPages').textContent = `${pdf.numPages} pages · Ready to generate`;
+    document.getElementById('pdfMcqControls').style.display = 'block';
+  } catch(e) {
+    document.getElementById('pdfPages').textContent = 'Error reading PDF. Try another file.';
+  }
+};
+
+window.generatePdfMcqs = async () => {
+  if (!pdfText) return;
+  await doPdfGenerate('pdfMcqList', false);
+};
+
+window.generateMorePdfMcqs = async () => {
+  if (!pdfText) return;
+  await doPdfGenerate('pdfMcqList', true);
+};
+
+async function doPdfGenerate(listId, append) {
+  const listEl = document.getElementById(listId);
+  if (!append) listEl.innerHTML = '';
+  const loadDiv = document.createElement('div');
+  loadDiv.className = 'loading-content';
+  loadDiv.innerHTML = '<div class="spinner"></div><div>Generating MCQs from your PDF...</div>';
+  listEl.appendChild(loadDiv);
+
+  try {
+    const res = await fetch('https://study-jns.vercel.app/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'pdf_mcq', pdfText, count: 10, previousQuestions: pdfPreviousQ })
+    });
+    const data = await res.json();
+    loadDiv.remove();
+    if (!data.success) throw new Error(data.error);
+    pdfPreviousQ.push(...data.data.map(q => q.q));
+    renderMcqs(data.data, listId, false);
+    saveQuizResult('PDF Upload', data.data.length);
+  } catch(e) {
+    loadDiv.innerHTML = '<div class="empty">Generation failed. Try again.</div>';
+  }
+}
+
+// RENDER MCQs
+function renderMcqs(questions, containerId, replace) {
+  const container = document.getElementById(containerId);
+  if (replace) container.innerHTML = '';
+  const startNum = container.querySelectorAll('.mcq-card').length + 1;
+
+  questions.forEach((q, i) => {
+    const uid = `mcq_${Date.now()}_${i}`;
+    const card = document.createElement('div');
+    card.className = 'mcq-card';
+    card.innerHTML = `
+      <div class="mcq-num">Q${startNum + i}</div>
+      <div class="mcq-q">${q.q}</div>
+      <div class="mcq-opts">
+        ${q.opts.map((o, j) => `
+          <div class="mcq-opt" id="${uid}_${j}" onclick="answerMcq('${uid}', ${j}, ${q.ans}, this)">
+            <span class="ol">${['A','B','C','D'][j]}</span>
+            <span>${o}</span>
+          </div>`).join('')}
+      </div>
+      <div class="mcq-feedback" id="${uid}_fb"></div>`;
+    container.appendChild(card);
+
+    // Store explanation
+    card.dataset.exp = q.exp;
+    card.dataset.ans = q.ans;
+    card.dataset.uid = uid;
+  });
+}
+
+window.answerMcq = (uid, chosen, correct, el) => {
+  const opts = document.querySelectorAll(`[id^="${uid}_"]:not([id$="_fb"])`);
+  opts.forEach(o => o.classList.add('disabled'));
+  el.classList.add(chosen === correct ? 'correct' : 'wrong');
+  if (chosen !== correct) document.getElementById(`${uid}_${correct}`).classList.add('correct');
+  const card = el.closest('.mcq-card');
+  const fb = document.getElementById(`${uid}_fb`);
+  fb.style.display = 'block';
+  fb.className = 'mcq-feedback ' + (chosen === correct ? 'correct' : 'wrong');
+  fb.innerHTML = `<div class="verd">${chosen === correct ? '✅ Correct!' : '❌ Wrong!'}</div>${card.dataset.exp}`;
+};
+
+// STATS
+async function loadStats() {
+  if (!currentUser) return;
+  const snap = await getDoc(doc(db, 'users', currentUser.uid));
+  if (snap.exists()) {
+    const d = snap.data();
+    const acc = d.totalQ > 0 ? Math.round((d.correct/d.totalQ)*100) : 0;
+    document.getElementById('stTotal').textContent = d.totalQ || 0;
+    document.getElementById('stAcc').textContent = acc + '%';
+    document.getElementById('stQuizzes').textContent = d.quizzes || 0;
+  }
+}
+
+async function saveQuizResult(topic, total) {
+  if (!currentUser) return;
+  const ref = doc(db, 'users', currentUser.uid);
+  const snap = await getDoc(ref);
+  const d = snap.data() || {};
+  await updateDoc(ref, { totalQ: (d.totalQ||0)+total, quizzes: (d.quizzes||0)+1, lastActive: serverTimestamp() });
+  await addDoc(collection(db,'users',currentUser.uid,'history'), { topic, total, date: serverTimestamp() });
+  loadStats();
+}
+
+async function loadProgress() {
+  if (!currentUser) return;
+  const snap = await getDoc(doc(db,'users',currentUser.uid));
+  if (snap.exists()) {
+    const d = snap.data();
+    const acc = d.totalQ>0?Math.round((d.correct/d.totalQ)*100):0;
+    document.getElementById('pTotal').textContent = d.totalQ||0;
+    document.getElementById('pTotalBar').style.width = Math.min(100,(d.totalQ||0)/2)+'%';
+    document.getElementById('pAcc').textContent = acc+'%';
+    document.getElementById('pAccBar').style.width = acc+'%';
+    document.getElementById('pQuizzes').textContent = d.quizzes||0;
+    document.getElementById('pQuizzesBar').style.width = Math.min(100,(d.quizzes||0)*5)+'%';
+    document.getElementById('pBest').textContent = (d.bestScore||0)+'%';
+    document.getElementById('pBestBar').style.width = (d.bestScore||0)+'%';
+  }
+  const hSnap = await getDocs(query(collection(db,'users',currentUser.uid,'history'), orderBy('date','desc'), limit(15)));
+  const list = document.getElementById('historyList');
+  if (hSnap.empty) { list.innerHTML = '<div class="empty">No activity yet. Start a quiz! 📝</div>'; return; }
+  list.innerHTML = hSnap.docs.map(d => {
+    const h = d.data();
+    const date = h.date?.toDate ? h.date.toDate().toLocaleDateString('en-PK') : 'Recently';
+    return `<div class="history-item"><div><div class="hi-topic">${h.topic}</div><div class="hi-date">${date}</div></div><div class="hi-score" style="color:var(--accent3)">${h.total} Qs</div></div>`;
+  }).join('');
+}
+
+async function loadLeaderboard() {
+  const snap = await getDocs(query(collection(db,'users'), orderBy('quizzes','desc'), limit(20)));
+  const list = document.getElementById('lbList');
+  if (snap.empty) { list.innerHTML = '<div class="empty">No players yet. Be first! 🏆</div>'; return; }
+  const medals = ['🥇','🥈','🥉'];
+  const colors = ['#ffb347','#c0c0c0','#cd7f32'];
+  list.innerHTML = snap.docs.map((d,i) => {
+    const u = d.data();
+    const isYou = d.id === currentUser?.uid;
+    return `<div class="lb-item ${isYou?'lb-you':''}">
+      <div class="lb-rank">${i<3?medals[i]:i+1}</div>
+      <div class="lb-av" style="background:${colors[i]||'var(--accent)'}">${(u.name||'S')[0].toUpperCase()}</div>
+      <div><div class="lb-name">${u.name||'Student'}${isYou?' (You)':''}</div><div class="lb-detail">${u.quizzes||0} quizzes done</div></div>
+      <div class="lb-score">${u.totalQ||0}</div>
+    </div>`;
+  }).join('');
+}
+
+</script>
+</body>
+</html>
