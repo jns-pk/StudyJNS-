@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudyJNS — ECAT & MDCAT Prep</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+:root {
+  --bg: #050810;
+  --surface: #0c1018;
+  --card: #111720;
+  --border: #1e2738;
+  --accent: #00e5ff;
+  --accent2: #ff4d6d;
+  --accent3: #b9ff4e;
+  --accent4: #ffb347;
+  --text: #e2eaf5;
+  --muted: #4a5a70;
+  --fd: 'Bebas Neue', sans-serif;
+  --fb: 'DM Sans', sans-serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--fb);
+  overflow-x: hidden;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,229,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,255,0.02) 1px, transparent 1px);
+  background-size: 50px 50px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* SCREENS */
+.screen { display: none; min-height: 100vh; position: relative; z-index: 1; }
+.screen.active { display: block; }
+
+/* NAVBAR */
+.navbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  background: rgba(5,8,16,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 56px;
+}
+.nav-logo {
+  font-family: var(--fd);
+  font-size: 1.6rem;
+  color: var(--accent);
+  letter-spacing: 2px;
+  cursor: pointer;
+}
+.hamburger {
+  background: none; border: none; cursor: pointer;
+  padding: 6px; display: flex; flex-direction: column; gap: 5px;
+}
+.hamburger span {
+  display: block; width: 22px; height: 2px;
+  background: var(--text); border-radius: 2px;
+  transition: all 0.3s;
+}
+
+/* SLIDE MENU */
+.slide-menu {
+  position: fixed; top: 0; right: -300px;
+  width: 280px; height: 100vh;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  z-index: 2000;
+  transition: right 0.3s;
+  padding: 70px 0 20px;
+  overflow-y: auto;
+}
+.slide-menu.open { right: 0; }
+.menu-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 1999;
+  display: none;
+}
+.menu-overlay.open { display: block; }
+.menu-section {
+  padding: 8px 20px 4px;
+  font-size: 0.65rem;
+  font-family: monospace;
+  color: var(--muted);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+.menu-item {
+  padding: 13px 20px;
+  display: flex; align-items: center; gap: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-size: 0.92rem; font-weight: 500;
+  border-left: 3px solid transparent;
+}
+.menu-item:hover {
+  background: rgba(0,229,255,0.05);
+  border-left-color: var(--accent);
+  color: var(--accent);
+}
+.menu-divider { height: 1px; background: var(--border); margin: 8px 0; }
+.menu-close {
+  position: absolute; top: 16px; right: 16px;
+  background: none; border: none;
+  color: var(--muted); font-size: 1.4rem; cursor: pointer;
+}
+
+/* LANDING */
+#landing { padding-top: 56px; }
+.hero {
+  min-height: calc(100vh - 56px);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; padding: 40px 20px;
+}
+.hero-tag {
+  display: inline-block;
+  font-family: monospace; font-size: 0.7rem;
+  color: var(--accent); border: 1px solid var(--accent);
+  padding: 4px 14px; border-radius: 2px;
+  letter-spacing: 3px; margin-bottom: 20px;
+}
+.hero h1 {
+  font-family: var(--fd);
+  font-size: clamp(3rem, 12vw, 6rem);
+  line-height: 0.95; letter-spacing: 2px;
+}
+.hero h1 span { color: var(--accent); }
+.hero-sub {
+  font-size: clamp(0.9rem, 3vw, 1.1rem);
+  color: var(--muted);
+  margin: 20px 0 32px;
+  max-width: 500px; line-height: 1.6;
+}
+.btn-hero {
+  padding: 14px 32px; border-radius: 10px;
+  font-size: 1rem; font-weight: 700;
+  cursor: pointer; font-family: var(--fb);
+  background: var(--accent); border: none; color: #000;
+  transition: all 0.2s;
+}
+.btn-hero:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,229,255,0.3); }
+
+.quote-strip {
+  background: var(--card);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 20px; text-align: center;
+  font-style: italic; color: var(--muted); font-size: 0.9rem;
+}
+.quote-strip strong { color: var(--accent3); font-style: normal; }
+
+.features { padding: 60px 20px; max-width: 860px; margin: 0 auto; }
+.section-title { font-family: var(--fd); font-size: 2rem; letter-spacing: 1px; margin-bottom: 6px; }
+.section-sub { color: var(--muted); font-size: 0.85rem; margin-bottom: 28px; }
+.feat-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; }
+.feat-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 22px;
+  position: relative; overflow: hidden;
+}
+.feat-card::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+}
+.feat-card:nth-child(1)::before { background: var(--accent); }
+.feat-card:nth-child(2)::before { background: var(--accent2); }
+.feat-card:nth-child(3)::before { background: var(--accent3); }
+.feat-card:nth-child(4)::before { background: var(--accent4); }
+.feat-icon { font-size: 1.8rem; margin-bottom: 10px; }
+.feat-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 6px; }
+.feat-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+
+.subjects-strip {
+  padding: 40px 20px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.subjects-strip h2 { font-family: var(--fd); font-size: 1.8rem; text-align: center; margin-bottom: 20px; }
+.subj-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.subj-pill {
+  padding: 10px 20px; border-radius: 30px;
+  font-weight: 700; font-size: 0.85rem;
+  cursor: pointer; transition: all 0.2s; border: 1px solid;
+}
+.subj-pill:hover { transform: translateY(-2px); }
+
+.motivation { padding: 50px 20px; text-align: center; max-width: 600px; margin: 0 auto; }
+.quote-big {
+  font-family: var(--fd);
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  color: var(--accent); line-height: 1.3; margin-bottom: 12px;
+}
+.quote-attr { color: var(--muted); font-size: 0.82rem; margin-bottom: 24px; }
+.quotes-list { display: flex; flex-direction: column; gap: 14px; text-align: left; }
+.q-item {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 18px;
+  border-left: 3px solid var(--accent);
+  font-style: italic; font-size: 0.85rem; color: var(--muted);
+}
+.q-item strong { color: var(--text); display: block; margin-top: 4px; font-style: normal; font-size: 0.75rem; }
+
+.cta { padding: 60px 20px; text-align: center; }
+.cta h2 { font-family: var(--fd); font-size: clamp(2rem, 6vw, 3rem); margin-bottom: 12px; }
+.cta p { color: var(--muted); margin-bottom: 24px; font-size: 0.9rem; }
+
+/* APP */
+#app { padding-top: 56px; }
+.app-main { max-width: 860px; margin: 0 auto; padding: 24px 16px 80px; }
+
+.welcome-card {
+  background: linear-gradient(135deg, #0a1f2a, #0d1a10);
+  border: 1px solid var(--border);
+  border-radius: 16px; padding: 24px;
+  margin-bottom: 20px;
+  position: relative; overflow: hidden;
+}
+.welcome-card::after {
+  content: 'StudyJNS';
+  position: absolute; right: -10px; bottom: -20px;
+  font-family: var(--fd); font-size: 6rem;
+  color: rgba(0,229,255,0.04); pointer-events: none;
+}
+.wc-name { font-family: var(--fd); font-size: 1.8rem; color: var(--accent); }
+.wc-sub { color: var(--muted); font-size: 0.82rem; margin-top: 3px; }
+.wc-quote {
+  margin-top: 14px; font-style: italic; font-size: 0.82rem;
+  color: var(--accent3);
+  border-left: 2px solid var(--accent3); padding-left: 10px;
+}
+
+.section-head { font-family: var(--fd); font-size: 1.6rem; letter-spacing: 1px; margin-bottom: 14px; }
+
+.subj-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin-bottom: 24px; }
+.subj-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px;
+  cursor: pointer; transition: all 0.2s;
+}
+.subj-card:hover { transform: translateY(-2px); }
+.sc-icon { font-size: 2rem; margin-bottom: 8px; }
+.sc-name { font-weight: 700; font-size: 0.95rem; }
+.sc-desc { font-size: 0.72rem; color: var(--muted); margin-top: 3px; }
+.sc-tag {
+  display: inline-block; font-size: 0.62rem;
+  font-family: monospace; padding: 2px 8px;
+  border-radius: 3px; margin-top: 8px; font-weight: 700;
+}
+
+.back-btn {
+  display: flex; align-items: center; gap: 8px;
+  background: none; border: none; color: var(--muted);
+  cursor: pointer; font-family: var(--fb);
+  font-size: 0.85rem; margin-bottom: 20px; padding: 0;
+}
+.back-btn:hover { color: var(--accent); }
+
+.topic-list { display: flex; flex-direction: column; gap: 8px; }
+.topic-item {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 16px 18px;
+  cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.topic-item:hover { border-color: var(--accent); }
+.ti-name { font-weight: 600; font-size: 0.92rem; }
+.ti-class { font-size: 0.7rem; color: var(--muted); margin-top: 2px; font-family: monospace; }
+
+.content-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 24px; margin-bottom: 16px;
+}
+.content-card h2 { font-family: var(--fd); font-size: 1.8rem; color: var(--accent); margin-bottom: 4px; }
+.subject-badge { font-size: 0.7rem; font-family: monospace; color: var(--muted); margin-bottom: 16px; display: block; }
+.content-section { margin-bottom: 18px; }
+.content-section h3 {
+  font-size: 0.72rem; font-family: monospace;
+  color: var(--muted); letter-spacing: 2px;
+  text-transform: uppercase; margin-bottom: 10px;
+}
+.definition-box {
+  background: var(--surface);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 16px; font-size: 0.88rem; line-height: 1.6;
+}
+.key-points { display: flex; flex-direction: column; gap: 6px; }
+.key-point { display: flex; gap: 10px; align-items: flex-start; font-size: 0.85rem; color: var(--muted); }
+.key-point::before { content: "›"; color: var(--accent); font-weight: 700; flex-shrink: 0; }
+.formula-list { display: flex; flex-direction: column; gap: 8px; }
+.formula-item { background: var(--surface); border-radius: 8px; padding: 12px 14px; }
+.formula-name { font-size: 0.72rem; color: var(--muted); margin-bottom: 4px; }
+.formula-eq { font-family: monospace; font-size: 0.95rem; color: var(--accent3); margin-bottom: 4px; }
+.formula-desc { font-size: 0.75rem; color: var(--muted); }
+.tip-box {
+  background: rgba(185,255,78,0.06);
+  border: 1px solid var(--accent3);
+  border-radius: 10px; padding: 14px 16px;
+  font-size: 0.82rem; color: var(--accent3); line-height: 1.5;
+}
+.tip-box strong { display: block; margin-bottom: 4px; }
+
+.loading-content { text-align: center; padding: 40px; color: var(--muted); }
+.spinner {
+  width: 32px; height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 12px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.mcq-controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+.btn-generate {
+  padding: 12px 24px; background: var(--accent2);
+  border: none; border-radius: 10px; color: #fff;
+  font-size: 0.92rem; font-weight: 700;
+  cursor: pointer; font-family: var(--fb); transition: all 0.2s;
+}
+.btn-generate:hover { opacity: 0.88; }
+.btn-generate:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-more {
+  padding: 12px 24px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 10px;
+  color: var(--text); font-size: 0.92rem; font-weight: 600;
+  cursor: pointer; font-family: var(--fb); transition: all 0.2s;
+}
+.btn-more:hover { border-color: var(--accent); color: var(--accent); }
+
+.mcq-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px; margin-bottom: 14px;
+}
+.mcq-num { font-size: 0.68rem; font-family: monospace; color: var(--muted); margin-bottom: 8px; }
+.mcq-q { font-size: 0.95rem; font-weight: 500; line-height: 1.6; margin-bottom: 14px; }
+.mcq-opts { display: flex; flex-direction: column; gap: 8px; }
+.mcq-opt {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: 9px; padding: 10px 14px;
+  cursor: pointer; transition: all 0.2s;
+  display: flex; gap: 10px; align-items: center; font-size: 0.88rem;
+}
+.mcq-opt:hover:not(.disabled) { border-color: var(--accent); background: rgba(0,229,255,0.04); }
+.mcq-opt .ol {
+  background: var(--border); color: #888;
+  border-radius: 5px; padding: 2px 7px;
+  font-size: 0.72rem; font-weight: 700;
+  min-width: 24px; text-align: center; font-family: monospace;
+}
+.mcq-opt.correct { border-color: #4caf50; background: #071a07; }
+.mcq-opt.correct .ol { background: #4caf50; color: #000; }
+.mcq-opt.wrong { border-color: var(--accent2); background: #1a0707; }
+.mcq-opt.wrong .ol { background: var(--accent2); color: #fff; }
+.mcq-opt.disabled { cursor: default; pointer-events: none; }
+
+.mcq-feedback {
+  margin-top: 12px; padding: 12px 14px;
+  border-radius: 9px; display: none;
+  font-size: 0.82rem; line-height: 1.6;
+}
+.mcq-feedback.correct { background: #071a07; border: 1px solid #4caf50; color: #a5d6a7; }
+.mcq-feedback.wrong { background: #1a0707; border: 1px solid var(--accent2); color: #ef9a9a; }
+.mcq-feedback .verd { font-weight: 700; margin-bottom: 4px; }
+
+.pdf-section {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 24px; margin-bottom: 20px;
+}
+.pdf-section h3 { font-family: var(--fd); font-size: 1.4rem; margin-bottom: 6px; }
+.pdf-section p { color: var(--muted); font-size: 0.82rem; margin-bottom: 16px; line-height: 1.5; }
+.pdf-drop {
+  border: 2px dashed var(--border); border-radius: 12px;
+  padding: 30px; text-align: center; cursor: pointer; transition: all 0.2s;
+}
+.pdf-drop:hover { border-color: var(--accent); background: rgba(0,229,255,0.03); }
+.pd-icon { font-size: 2rem; margin-bottom: 8px; }
+.pd-text { font-size: 0.85rem; color: var(--muted); }
+.pd-sub { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
+.pdf-loaded {
+  background: rgba(185,255,78,0.06); border: 1px solid var(--accent3);
+  border-radius: 10px; padding: 12px 16px;
+  display: none; align-items: center; gap: 12px; margin-top: 12px;
+}
+.pf-name { font-size: 0.85rem; font-weight: 600; color: var(--accent3); }
+.pf-pages { font-size: 0.72rem; color: var(--muted); }
+#pdfFileInput { display: none; }
+.empty { text-align: center; color: var(--muted); font-size: 0.85rem; padding: 28px; }
+
+@media (max-width: 520px) {
+  .feat-grid { grid-template-columns: 1fr; }
+  .subj-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-logo" onclick="goHome()">StudyJNS</div>
+  <button class="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
+<div class="slide-menu" id="slideMenu">
+  <button class="menu-close" onclick="closeMenu()">&#x2715;</button>
+  <div class="menu-section">Subjects</div>
+  <div class="menu-item" onclick="goSubject('physics')">&#9889; Physics</div>
+  <div class="menu-item" onclick="goSubject('chemistry')">&#129514; Chemistry</div>
+  <div class="menu-item" onclick="goSubject('biology')">&#129516; Biology</div>
+  <div class="menu-item" onclick="goSubject('math')">&#128208; Mathematics</div>
+  <div class="menu-item" onclick="goSubject('cs')">&#128187; Computer Science</div>
+  <div class="menu-item" onclick="goSubject('english')">&#128221; English</div>
+  <div class="menu-divider"></div>
+  <div class="menu-section">Tools</div>
+  <div class="menu-item" onclick="showTab('pdf'); closeMenu()">&#128196; PDF MCQ Generator</div>
+  <div class="menu-item" onclick="goHome()">&#127968; Home</div>
+</div>
+
+<!-- LANDING -->
+<div id="landing" class="screen active">
+  <div class="hero">
+    <div class="hero-tag">FREE &middot; ECAT &middot; MDCAT &middot; PAKISTAN</div>
+    <h1>STUDY<br><span>SMARTER</span><br>NOT HARDER</h1>
+    <p class="hero-sub">Pakistan's smartest free entry test prep. AI-powered MCQs, chapter-by-chapter learning, PDF practice — no signup needed.</p>
+    <button class="btn-hero" onclick="startApp()">Start Learning Free &rarr;</button>
+  </div>
+
+  <div class="quote-strip">
+    "Every question you practice today is one less mistake in July." — <strong>Start now, thank yourself later.</strong>
+  </div>
+
+  <div class="features">
+    <div class="section-title">Everything You Need</div>
+    <div class="section-sub">Built for Pakistani ECAT &amp; MDCAT students</div>
+    <div class="feat-grid">
+      <div class="feat-card"><div class="feat-icon">&#129504;</div><div class="feat-title">Learn by Topic</div><div class="feat-desc">Definitions, formulas, key points — organized by chapter for Class 11 &amp; 12.</div></div>
+      <div class="feat-card"><div class="feat-icon">&#129302;</div><div class="feat-title">AI MCQ Generator</div><div class="feat-desc">Hard exam-level MCQs by AI. Get a full explanation for every wrong answer.</div></div>
+      <div class="feat-card"><div class="feat-icon">&#128196;</div><div class="feat-title">PDF Upload</div><div class="feat-desc">Upload any book or notes. AI generates infinite MCQs from your own material.</div></div>
+      <div class="feat-card"><div class="feat-icon">&#8734;</div><div class="feat-title">Infinite Practice</div><div class="feat-desc">Never run out of questions. Generate more anytime from any topic or PDF.</div></div>
+    </div>
+  </div>
+
+  <div class="subjects-strip">
+    <h2>6 Subjects. Every Chapter.</h2>
+    <div class="subj-row">
+      <div class="subj-pill" style="color:#00e5ff;border-color:#00e5ff;background:rgba(0,229,255,0.08)" onclick="startApp()">Physics</div>
+      <div class="subj-pill" style="color:#ff4d6d;border-color:#ff4d6d;background:rgba(255,77,109,0.08)" onclick="startApp()">Chemistry</div>
+      <div class="subj-pill" style="color:#b9ff4e;border-color:#b9ff4e;background:rgba(185,255,78,0.08)" onclick="startApp()">Biology</div>
+      <div class="subj-pill" style="color:#ffb347;border-color:#ffb347;background:rgba(255,179,71,0.08)" onclick="startApp()">Math</div>
+      <div class="subj-pill" style="color:#c084fc;border-color:#c084fc;background:rgba(192,132,252,0.08)" onclick="startApp()">CS</div>
+      <div class="subj-pill" style="color:#f472b6;border-color:#f472b6;background:rgba(244,114,182,0.08)" onclick="startApp()">English</div>
+    </div>
+  </div>
+
+  <div class="motivation">
+    <div class="quote-big">"Success is the sum of small efforts repeated day in and day out."</div>
+    <div class="quote-attr">— Robert Collier</div>
+    <div class="quotes-list">
+      <div class="q-item">"The pain of studying is temporary. The pain of not studying is permanent." <strong>— Every ECAT topper ever</strong></div>
+      <div class="q-item">"You don't have to be brilliant. You just have to be consistent." <strong>— Start with 3 hours today</strong></div>
+      <div class="q-item">"ECAT/MDCAT is not about being smart. It's about being prepared." <strong>— StudyJNS</strong></div>
+    </div>
+  </div>
+
+  <div class="cta">
+    <h2>No Signup. Just Learn.</h2>
+    <p>100% free. Open and start immediately.</p>
+    <button class="btn-hero" onclick="startApp()">Start Now &rarr;</button>
+  </div>
+
+  <div style="text-align:center;padding:20px;color:var(--muted);font-size:0.72rem;font-family:monospace;border-top:1px solid var(--border)">
+    StudyJNS &middot; Free for Pakistani Students &middot; ECAT &amp; MDCAT 2026
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" class="screen">
+  <div class="app-main">
+
+    <!-- Dashboard -->
+    <div id="tabDashboard">
+      <div class="welcome-card">
+        <div class="wc-name">Welcome to StudyJNS</div>
+        <div class="wc-sub">ECAT &middot; MDCAT &middot; Free &middot; No Signup</div>
+        <div class="wc-quote" id="wcQuote">"Every expert was once a beginner. Start now."</div>
+      </div>
+      <div class="section-head">Choose a Subject</div>
+      <div class="subj-grid" id="subjGrid"></div>
+    </div>
+
+    <!-- Topics -->
+    <div id="tabTopics" style="display:none">
+      <button class="back-btn" onclick="showTab('dashboard')">&#8592; Back</button>
+      <div class="section-head" id="topicsTitle"></div>
+      <div class="topic-list" id="topicsList"></div>
+    </div>
+
+    <!-- Content -->
+    <div id="tabContent" style="display:none">
+      <button class="back-btn" onclick="showTab('topics')">&#8592; Back to Topics</button>
+      <div id="contentArea"></div>
+      <div id="mcqArea"></div>
+    </div>
+
+    <!-- PDF -->
+    <div id="tabPdf" style="display:none">
+      <button class="back-btn" onclick="showTab('dashboard')">&#8592; Back</button>
+      <div class="section-head">PDF MCQ Generator</div>
+      <div class="pdf-section">
+        <h3>Upload Your Book or Notes</h3>
+        <p>Upload any PDF and AI will generate infinite hard MCQs from it. Wrong answer? Get a full explanation from your own material.</p>
+        <div class="pdf-drop" onclick="document.getElementById('pdfFileInput').click()">
+          <div class="pd-icon">&#128196;</div>
+          <div class="pd-text">Tap to upload PDF</div>
+          <div class="pd-sub">Any textbook, notes, or chapter</div>
+        </div>
+        <input type="file" id="pdfFileInput" accept=".pdf" onchange="handlePdfUpload(event)">
+        <div class="pdf-loaded" id="pdfLoaded">
+          <span style="font-size:1.4rem">&#9989;</span>
+          <div>
+            <div class="pf-name" id="pdfName"></div>
+            <div class="pf-pages" id="pdfPages"></div>
+          </div>
+        </div>
+      </div>
+      <div id="pdfMcqControls" style="display:none">
+        <div class="mcq-controls">
+          <button class="btn-generate" id="pdfGenBtn" onclick="generatePdfMcqs()">Generate MCQs</button>
+          <button class="btn-more" onclick="generateMorePdfMcqs()">+ Generate More</button>
+        </div>
+      </div>
+      <div id="pdfMcqList"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+const API = 'https://study-jns.vercel.app/api/generate';
+
+const quotes = [
+  '"Every question you practice today is one less mistake in July."',
+  '"The secret to getting ahead is getting started."',
+  '"Consistency is what transforms average into excellence."',
+  '"ECAT/MDCAT is not about being smart. Its about being prepared."',
+  '"You dont have to be great to start, but you have to start to be great."',
+];
+
+const subjects = {
+  physics: {
+    name: 'Physics', icon: '⚡', color: '#00e5ff', tag: 'ECAT + MDCAT',
+    topics: [
+      { n: 'Measurements & Units', c: 'Class 11' },
+      { n: 'Vectors & Scalars', c: 'Class 11' },
+      { n: 'Kinematics', c: 'Class 11' },
+      { n: "Newton's Laws of Motion", c: 'Class 11' },
+      { n: 'Work, Energy & Power', c: 'Class 11' },
+      { n: 'Circular Motion', c: 'Class 11' },
+      { n: 'Fluid Mechanics', c: 'Class 11' },
+      { n: 'Waves & Sound', c: 'Class 11' },
+      { n: 'Thermodynamics', c: 'Class 11' },
+      { n: 'Electrostatics', c: 'Class 12' },
+      { n: 'Current Electricity', c: 'Class 12' },
+      { n: 'Magnetism & Electromagnetism', c: 'Class 12' },
+      { n: 'Electromagnetic Induction', c: 'Class 12' },
+      { n: 'Optics & Light', c: 'Class 12' },
+      { n: 'Atomic & Nuclear Physics', c: 'Class 12' },
+    ]
+  },
+  chemistry: {
+    name: 'Chemistry', icon: '🧪', color: '#ff4d6d', tag: 'ECAT + MDCAT',
+    topics: [
+      { n: 'Atomic Structure', c: 'Class 11' },
+      { n: 'Chemical Bonding', c: 'Class 11' },
+      { n: 'States of Matter', c: 'Class 11' },
+      { n: 'Stoichiometry', c: 'Class 11' },
+      { n: 'Thermochemistry', c: 'Class 11' },
+      { n: 'Chemical Equilibrium', c: 'Class 11' },
+      { n: 'Acids, Bases & Salts', c: 'Class 11' },
+      { n: 'Electrochemistry', c: 'Class 12' },
+      { n: 'Reaction Kinetics', c: 'Class 12' },
+      { n: 'Organic Chemistry Basics', c: 'Class 12' },
+      { n: 'Hydrocarbons', c: 'Class 12' },
+      { n: 'Alcohols & Ethers', c: 'Class 12' },
+      { n: 'Aldehydes & Ketones', c: 'Class 12' },
+      { n: 'Carboxylic Acids', c: 'Class 12' },
+      { n: 'Macromolecules', c: 'Class 12' },
+    ]
+  },
+  biology: {
+    name: 'Biology', icon: '🧬', color: '#b9ff4e', tag: 'MDCAT',
+    topics: [
+      { n: 'Cell Structure & Function', c: 'Class 11' },
+      { n: 'Biological Molecules', c: 'Class 11' },
+      { n: 'Enzymes', c: 'Class 11' },
+      { n: 'Cell Division', c: 'Class 11' },
+      { n: 'Nutrition', c: 'Class 11' },
+      { n: 'Gaseous Exchange', c: 'Class 11' },
+      { n: 'Transport in Plants', c: 'Class 11' },
+      { n: 'Transport in Animals', c: 'Class 11' },
+      { n: 'Homeostasis', c: 'Class 12' },
+      { n: 'Nervous System', c: 'Class 12' },
+      { n: 'Endocrine System', c: 'Class 12' },
+      { n: 'Reproduction', c: 'Class 12' },
+      { n: 'Genetics & Inheritance', c: 'Class 12' },
+      { n: 'Evolution', c: 'Class 12' },
+      { n: 'Biotechnology', c: 'Class 12' },
+    ]
+  },
+  math: {
+    name: 'Mathematics', icon: '📐', color: '#ffb347', tag: 'ECAT',
+    topics: [
+      { n: 'Sets & Functions', c: 'Class 11' },
+      { n: 'Number Systems', c: 'Class 11' },
+      { n: 'Algebra & Factorization', c: 'Class 11' },
+      { n: 'Matrices & Determinants', c: 'Class 11' },
+      { n: 'Quadratic Equations', c: 'Class 11' },
+      { n: 'Sequences & Series', c: 'Class 11' },
+      { n: 'Permutations & Combinations', c: 'Class 11' },
+      { n: 'Trigonometry Basics', c: 'Class 11' },
+      { n: 'Trigonometric Identities', c: 'Class 11' },
+      { n: 'Conic Sections', c: 'Class 12' },
+      { n: 'Limits & Continuity', c: 'Class 12' },
+      { n: 'Differentiation', c: 'Class 12' },
+      { n: 'Integration', c: 'Class 12' },
+      { n: 'Differential Equations', c: 'Class 12' },
+      { n: 'Statistics & Probability', c: 'Class 12' },
+    ]
+  },
+  cs: {
+    name: 'Computer Science', icon: '💻', color: '#c084fc', tag: 'Pre-CS',
+    topics: [
+      { n: 'Introduction to Computing', c: 'Class 11' },
+      { n: 'Number Systems', c: 'Class 11' },
+      { n: 'Boolean Algebra & Logic Gates', c: 'Class 11' },
+      { n: 'Computer Architecture', c: 'Class 11' },
+      { n: 'Operating Systems', c: 'Class 11' },
+      { n: 'Programming Basics (C++)', c: 'Class 11' },
+      { n: 'Control Structures', c: 'Class 11' },
+      { n: 'Arrays & Functions', c: 'Class 12' },
+      { n: 'Object Oriented Programming', c: 'Class 12' },
+      { n: 'Data Structures', c: 'Class 12' },
+      { n: 'Algorithms & Complexity', c: 'Class 12' },
+      { n: 'Database Fundamentals', c: 'Class 12' },
+      { n: 'Networking Basics', c: 'Class 12' },
+      { n: 'Web Technologies', c: 'Class 12' },
+    ]
+  },
+  english: {
+    name: 'English', icon: '📝', color: '#f472b6', tag: 'ECAT + MDCAT',
+    topics: [
+      { n: 'Parts of Speech', c: 'Class 11' },
+      { n: 'Tenses & Verb Forms', c: 'Class 11' },
+      { n: 'Active & Passive Voice', c: 'Class 11' },
+      { n: 'Direct & Indirect Speech', c: 'Class 11' },
+      { n: 'Sentence Structure', c: 'Class 11' },
+      { n: 'Prepositions & Articles', c: 'Class 11' },
+      { n: 'Vocabulary & Synonyms', c: 'Class 12' },
+      { n: 'Antonyms & Word Meanings', c: 'Class 12' },
+      { n: 'Reading Comprehension', c: 'Class 12' },
+      { n: 'Sentence Correction', c: 'Class 12' },
+      { n: 'Analogies & Pair of Words', c: 'Class 12' },
+    ]
+  },
+};
+
+let curSubject = null;
+let curTopic = null;
+let topicPrevQ = [];
+let pdfText = '';
+let pdfPrevQ = [];
+
+// ── Navigation ──────────────────────────────────────────────
+function goHome() {
+  showScreen('landing');
+  closeMenu();
+}
+
+function startApp() {
+  document.getElementById('wcQuote').textContent = quotes[Math.floor(Math.random() * quotes.length)];
+  renderSubjGrid();
+  showScreen('app');
+  showTab('dashboard');
+  window.scrollTo(0, 0);
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function showTab(tab) {
+  const map = {
+    dashboard: 'tabDashboard',
+    topics: 'tabTopics',
+    content: 'tabContent',
+    pdf: 'tabPdf'
+  };
+  Object.values(map).forEach(id => {
+    document.getElementById(id).style.display = 'none';
+  });
+  document.getElementById(map[tab]).style.display = 'block';
+
+  // Make sure app screen is visible
+  showScreen('app');
+  window.scrollTo(0, 0);
+}
+
+function toggleMenu() {
+  document.getElementById('slideMenu').classList.toggle('open');
+  document.getElementById('menuOverlay').classList.toggle('open');
+}
+
+function closeMenu() {
+  document.getElementById('slideMenu').classList.remove('open');
+  document.getElementById('menuOverlay').classList.remove('open');
+}
+
+function goSubject(id) {
+  closeMenu();
+  showSubjectTopics(id);
+  showScreen('app');
+}
+
+// ── Render subject grid ──────────────────────────────────────
+function renderSubjGrid() {
+  document.getElementById('subjGrid').innerHTML = Object.entries(subjects).map(([id, s]) => `
+    <div class="subj-card" onclick="showSubjectTopics('${id}')" style="border-top:3px solid ${s.color}">
+      <div class="sc-icon">${s.icon}</div>
+      <div class="sc-name">${s.name}</div>
+      <div class="sc-desc">${s.topics.length} topics &middot; Class 11 &amp; 12</div>
+      <div class="sc-tag" style="color:${s.color};border:1px solid ${s.color};background:${s.color}18">${s.tag}</div>
+    </div>
+  `).join('');
+}
+
+function showSubjectTopics(id) {
+  curSubject = id;
+  const s = subjects[id];
+  document.getElementById('topicsTitle').textContent = s.name;
+  document.getElementById('topicsList').innerHTML = s.topics.map((t, i) => `
+    <div class="topic-item" onclick="showTopicContent('${id}', ${i})">
+      <div>
+        <div class="ti-name">${t.n}</div>
+        <div class="ti-class">${t.c}</div>
+      </div>
+      <span style="color:var(--muted)">&#8594;</span>
+    </div>
+  `).join('');
+  showTab('topics');
+}
+
+// ── Topic content ────────────────────────────────────────────
+async function showTopicContent(subId, idx) {
+  curTopic = { subId, idx };
+  topicPrevQ = [];
+  const s = subjects[subId];
+  const t = s.topics[idx];
+  showTab('content');
+  document.getElementById('contentArea').innerHTML = `
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <div>Loading ${t.n}...</div>
+    </div>`;
+  document.getElementById('mcqArea').innerHTML = '';
+
+  try {
+    const res = await fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'topic_content', topic: t.n, subject: s.name })
+    });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error);
+    renderContent(data.data);
+  } catch (e) {
+    document.getElementById('contentArea').innerHTML = `
+      <div class="empty">Failed to load. Check internet and try again.<br><small style="color:var(--accent2)">${e.message}</small></div>`;
+  }
+}
+
+function renderContent(d) {
+  document.getElementById('contentArea').innerHTML = `
+    <div class="content-card">
+      <h2>${d.title}</h2>
+      <span class="subject-badge">${d.subject}</span>
+      <div class="content-section">
+        <h3>Definition</h3>
+        <div class="definition-box">${d.definition}</div>
+      </div>
+      ${d.keyPoints && d.keyPoints.length ? `
+        <div class="content-section">
+          <h3>Key Points</h3>
+          <div class="key-points">${d.keyPoints.map(p => `<div class="key-point">${p}</div>`).join('')}</div>
+        </div>` : ''}
+      ${d.formulas && d.formulas.length ? `
+        <div class="content-section">
+          <h3>Formulas</h3>
+          <div class="formula-list">${d.formulas.map(f => `
+            <div class="formula-item">
+              <div class="formula-name">${f.name}</div>
+              <div class="formula-eq">${f.formula}</div>
+              <div class="formula-desc">${f.description}</div>
+            </div>`).join('')}
+          </div>
+        </div>` : ''}
+      ${d.ecat_mdcat_tip ? `
+        <div class="content-section">
+          <h3>ECAT/MDCAT Tip</h3>
+          <div class="tip-box"><strong>Exam Tip</strong>${d.ecat_mdcat_tip}</div>
+        </div>` : ''}
+    </div>`;
+
+  document.getElementById('mcqArea').innerHTML = `
+    <div class="mcq-controls">
+      <button class="btn-generate" id="topicGenBtn" onclick="generateTopicMcqs()">Generate Hard MCQs</button>
+    </div>
+    <div id="topicMcqList"></div>`;
+}
+
+async function generateTopicMcqs() {
+  const { subId, idx } = curTopic;
+  const s = subjects[subId];
+  const t = s.topics[idx];
+  const btn = document.getElementById('topicGenBtn');
+  const list = document.getElementById('topicMcqList');
+  btn.disabled = true;
+  btn.textContent = 'Generating...';
+  const loader = document.createElement('div');
+  loader.className = 'loading-content';
+  loader.innerHTML = '<div class="spinner"></div><div>Generating hard MCQs...</div>';
+  list.appendChild(loader);
+
+  try {
+    const res = await fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'topic_mcq', topic: t.n, subject: s.name, count: 10, previousQuestions: topicPrevQ })
+    });
+    const data = await res.json();
+    loader.remove();
+    if (!data.success) throw new Error(data.error);
+    topicPrevQ.push(...data.data.map(q => q.q));
+    renderMcqs(data.data, 'topicMcqList');
+    btn.textContent = '+ Generate More';
+    btn.disabled = false;
+  } catch (e) {
+    loader.innerHTML = `<div class="empty">Generation failed. Try again.<br><small style="color:var(--accent2)">${e.message}</small></div>`;
+    btn.disabled = false;
+    btn.textContent = 'Generate Hard MCQs';
+  }
+}
+
+// ── PDF ──────────────────────────────────────────────────────
+async function handlePdfUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  document.getElementById('pdfName').textContent = file.name;
+  document.getElementById('pdfPages').textContent = 'Reading PDF...';
+  document.getElementById('pdfLoaded').style.display = 'flex';
+
+  try {
+    const buf = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+    let text = '';
+    const maxP = Math.min(pdf.numPages, 20);
+    for (let i = 1; i <= maxP; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      text += content.items.map(item => item.str).join(' ') + '\n';
+    }
+    pdfText = text;
+    pdfPrevQ = [];
+    document.getElementById('pdfPages').textContent = pdf.numPages + ' pages · Ready';
+    document.getElementById('pdfMcqControls').style.display = 'block';
+    document.getElementById('pdfMcqList').innerHTML = '';
+  } catch (e) {
+    document.getElementById('pdfPages').textContent = 'Error reading PDF.';
+  }
+}
+
+async function generatePdfMcqs() { await doPdfGen(false); }
+async function generateMorePdfMcqs() { await doPdfGen(true); }
+
+async function doPdfGen(append) {
+  if (!pdfText) return;
+  const list = document.getElementById('pdfMcqList');
+  if (!append) list.innerHTML = '';
+  const loader = document.createElement('div');
+  loader.className = 'loading-content';
+  loader.innerHTML = '<div class="spinner"></div><div>Generating MCQs from your PDF...</div>';
+  list.appendChild(loader);
+
+  try {
+    const res = await fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'pdf_mcq', pdfText, count: 10, previousQuestions: pdfPrevQ })
+    });
+    const data = await res.json();
+    loader.remove();
+    if (!data.success) throw new Error(data.error);
+    pdfPrevQ.push(...data.data.map(q => q.q));
+    renderMcqs(data.data, 'pdfMcqList');
+  } catch (e) {
+    loader.innerHTML = `<div class="empty">Generation failed. Try again.<br><small style="color:var(--accent2)">${e.message}</small></div>`;
+  }
+}
+
+// ── MCQ Renderer ─────────────────────────────────────────────
+function renderMcqs(questions, containerId) {
+  const container = document.getElementById(containerId);
+  const start = container.querySelectorAll('.mcq-card').length + 1;
+  questions.forEach((q, i) => {
+    const uid = 'q_' + Date.now() + '_' + i;
+    const card = document.createElement('div');
+    card.className = 'mcq-card';
+    card.dataset.exp = q.exp;
+    card.dataset.ans = q.ans;
+    card.innerHTML = `
+      <div class="mcq-num">Q${start + i}</div>
+      <div class="mcq-q">${q.q}</div>
+      <div class="mcq-opts">
+        ${q.opts.map((o, j) => `
+          <div class="mcq-opt" id="${uid}_${j}" onclick="answerQ('${uid}', ${j}, ${q.ans}, this)">
+            <span class="ol">${['A','B','C','D'][j]}</span>
+            <span>${o}</span>
+          </div>`).join('')}
+      </div>
+      <div class="mcq-feedback" id="${uid}_fb"></div>`;
+    container.appendChild(card);
+  });
+}
+
+function answerQ(uid, chosen, correct, el) {
+  const opts = document.querySelectorAll(`[id^="${uid}_"]:not([id$="_fb"])`);
+  opts.forEach(o => o.classList.add('disabled'));
+  el.classList.add(chosen === correct ? 'correct' : 'wrong');
+  if (chosen !== correct) {
+    document.getElementById(`${uid}_${correct}`).classList.add('correct');
+  }
+  const card = el.closest('.mcq-card');
+  const fb = document.getElementById(`${uid}_fb`);
+  fb.style.display = 'block';
+  fb.className = 'mcq-feedback ' + (chosen === correct ? 'correct' : 'wrong');
+  fb.innerHTML = `<div class="verd">${chosen === correct ? 'Correct!' : 'Wrong!'}</div>${card.dataset.exp}`;
+}
+
+// Init
+renderSubjGrid();
+</script>
+</body>
+</html>
